@@ -10,7 +10,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(package-selected-packages (quote (magit moe-theme))))
+ '(inhibit-startup-screen t)
+ '(package-selected-packages (quote (multiple-cursors magit moe-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -22,6 +23,16 @@
 (require 'moe-theme-switcher)
 (setq calendar-latitude +40)
 (setq calendar-longitude -74)
+
+;; ##### CONFIGS FOR PACKAGES#####
+
+;; multiple cursors
+
+(require 'multiple-cursors)
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 
 ;; General Config
