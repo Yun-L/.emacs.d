@@ -38,5 +38,7 @@
 ;; General Config
 (global-linum-mode t)
 (setq-default tab-width 4)
+(defvaralias 'c-basic-offset 'tab-width)
+(defvaralias 'cperl-indent-level 'tab-width)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)

@@ -3,6 +3,7 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+		org-delete-char
 		org-self-insert-command
 		))
 
