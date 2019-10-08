@@ -5,6 +5,7 @@
       '(
 		org-delete-char
 		org-self-insert-command
+		save-some-buffers
 		))
 
 (setq mc/cmds-to-run-once

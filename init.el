@@ -3,6 +3,9 @@
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
 
+;; Add Local Directories to Load Path
+(add-to-list 'load-path "~/.emacs.d/extras")
+
 ;; Initialize Package
 (package-initialize)
 (custom-set-variables
@@ -26,7 +29,7 @@
 
 ;; ##### CONFIGS FOR PACKAGES#####
 
-;; multiple cursors
+;; Multiple Cursors
 
 (require 'multiple-cursors)
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
@@ -34,10 +37,18 @@
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
+;; Fill Column Indicator
+
+(require 'fill-column-indicator)
+(setq fci-rule-width 1)
+(setq fci-rule-color "turquoise1")
+
 
 ;; General Config
+
 (global-linum-mode t)
 (setq-default tab-width 4)
+(setq-default fill-column 80)
 (defvaralias 'c-basic-offset 'tab-width)
 (defvaralias 'cperl-indent-level 'tab-width)
 (tool-bar-mode -1)
