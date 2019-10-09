@@ -13,8 +13,9 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(elpy-rpc-python-command "python")
  '(inhibit-startup-screen t)
- '(package-selected-packages (quote (multiple-cursors magit moe-theme))))
+ '(package-selected-packages (quote (flycheck elpy multiple-cursors magit moe-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -37,11 +38,20 @@
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
+
 ;; Fill Column Indicator
 
 (require 'fill-column-indicator)
 (setq fci-rule-width 1)
 (setq fci-rule-color "turquoise1")
+
+
+;; Python Development
+
+(elpy-enable)
+(when (require 'flycheck nil t)
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode))
 
 
 ;; General Config
@@ -53,3 +63,4 @@
 (defvaralias 'cperl-indent-level 'tab-width)
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
+
