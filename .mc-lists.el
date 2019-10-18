@@ -3,9 +3,11 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+		electric-newline-and-maybe-indent
 		org-delete-char
 		org-self-insert-command
 		save-some-buffers
+		sh-assignment
 		))
 
 (setq mc/cmds-to-run-once
