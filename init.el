@@ -28,7 +28,7 @@
 (setq calendar-latitude +40)
 (setq calendar-longitude -74)
 
-;; ##### CONFIGS FOR PACKAGES#####
+;;;;;;;;;;; CONFIGS FOR PACKAGES
 
 ;; Multiple Cursors
 
@@ -56,7 +56,7 @@
 (add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
 
 
-;; General Config
+;;;; General Config
 
 (global-linum-mode t)
 (setq-default tab-width 4)
@@ -66,3 +66,11 @@
 (tool-bar-mode -1)
 (toggle-scroll-bar -1)
 
+
+;; Backup/Autosave
+
+(defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
+(defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
+(setq backup-directory-alist (list (cons ".*" backup-dir)))
+(setq auto-save-list-file-prefix autosave-dir)
+(setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))

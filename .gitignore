@@ -1,9 +1,7 @@
-# Emacs File Backups
-*~
-
 # Session Specific Files
 eshell/*
 auto-save-list/*
 games/*
+backup/*
 session.*
 *.pyc
