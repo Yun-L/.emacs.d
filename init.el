@@ -17,7 +17,7 @@
  '(inhibit-startup-screen t)
  '(package-selected-packages
    (quote
-	(gnu-elpa-keyring-update flycheck elpy multiple-cursors magit moe-theme))))
+	(impatient-mode gnu-elpa-keyring-update flycheck elpy multiple-cursors magit moe-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -77,5 +77,11 @@
 (setq auto-save-list-file-prefix autosave-dir)
 (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
 
-;;
+;; fixed error in emacs versions <= 26.2
 (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+;; impatient mode function for markdown files
+(defun markdown-html (buffer)
+  (princ (with-current-buffer buffer
+		   (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
+		 (current-buffer)))
