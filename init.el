@@ -1,7 +1,7 @@
 
 ;; Add Melpa Source
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "http://melpa.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
 ;; Add Local Directories to Load Path
 (add-to-list 'load-path "~/.emacs.d/extras")
@@ -15,7 +15,9 @@
  ;; If there is more than one, they won't work right.
  '(elpy-rpc-python-command "python")
  '(inhibit-startup-screen t)
- '(package-selected-packages (quote (flycheck elpy multiple-cursors magit moe-theme))))
+ '(package-selected-packages
+   (quote
+	(gnu-elpa-keyring-update flycheck elpy multiple-cursors magit moe-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -74,3 +76,6 @@
 (setq backup-directory-alist (list (cons ".*" backup-dir)))
 (setq auto-save-list-file-prefix autosave-dir)
 (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+
+;;
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
