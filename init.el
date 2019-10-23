@@ -46,7 +46,7 @@
 (require 'fill-column-indicator)
 (setq fci-rule-width 1)
 (setq fci-rule-color "turquoise1")
-
+(add-hook 'after-change-major-mode-hook 'fci-mode)
 
 ;; Python Development
 
