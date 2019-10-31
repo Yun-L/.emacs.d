@@ -3,5 +3,6 @@ eshell/*
 auto-save-list/*
 games/*
 backup/*
+autosave/*
 session.*
 *.pyc
