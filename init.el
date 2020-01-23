@@ -15,6 +15,9 @@
  ;; If there is more than one, they won't work right.
  '(elpy-rpc-python-command "python")
  '(inhibit-startup-screen t)
+ '(org-todo-keywords
+   (quote
+	((sequence "TODO(t)" "IN_PROGRESS(p)" "BLOCKED(b)" "DONE(d)"))))
  '(package-selected-packages
    (quote
 	(impatient-mode gnu-elpa-keyring-update flycheck elpy multiple-cursors magit moe-theme))))
@@ -85,3 +88,26 @@
   (princ (with-current-buffer buffer
 		   (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
 		 (current-buffer)))
+
+;; Org Mode
+(add-hook 'org-mode-hook 'org-indent-mode)
+(setq org-log-done 'time)
+(setq org-log-done 'note)
+
+;; OCaml
+(let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
+      (when (and opam-share (file-directory-p opam-share))
+       ;; Register Merlin
+       (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+       (autoload 'merlin-mode "merlin" nil t nil)
+       ;; Automatically start it in OCaml buffers
+       (add-hook 'tuareg-mode-hook 'merlin-mode t)
+       (add-hook 'caml-mode-hook 'merlin-mode t)
+       ;; Use opam switch to lookup ocamlmerlin binary
+       (setq merlin-command 'opam)))
+
+(add-to-list 'load-path "/home/yun/.opam/system/share/emacs/site-lisp")
+(require 'ocp-indent)
+;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
+(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
+;; ## end of OPAM user-setup addition for emacs / base ## keep this line
