@@ -3,9 +3,14 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+		TeX-insert-backslash
+		c-electric-delete-forward
+		c-electric-paren
+		c-indent-line-or-region
 		electric-newline-and-maybe-indent
 		org-delete-char
 		org-self-insert-command
+		org-yank
 		save-some-buffers
 		sh-assignment
 		))

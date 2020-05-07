@@ -15,12 +15,9 @@
  ;; If there is more than one, they won't work right.
  '(elpy-rpc-python-command "python")
  '(inhibit-startup-screen t)
- '(org-todo-keywords
-   (quote
-	((sequence "TODO(t)" "IN_PROGRESS(p)" "BLOCKED(b)" "DONE(d)"))))
  '(package-selected-packages
    (quote
-	(impatient-mode gnu-elpa-keyring-update flycheck elpy multiple-cursors magit moe-theme))))
+	(auctex impatient-mode gnu-elpa-keyring-update flycheck elpy multiple-cursors magit moe-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -81,7 +78,7 @@
 (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
 
 ;; fixed error in emacs versions <= 26.2
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+;; (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
 ;; impatient mode function for markdown files
 (defun markdown-html (buffer)
@@ -93,6 +90,26 @@
 (add-hook 'org-mode-hook 'org-indent-mode)
 (setq org-log-done 'time)
 (setq org-log-done 'note)
+
+;; Org Mode - Task Management
+
+(setq org-agenda-files '("~/Dropbox/org/gtd_curr.org"
+						 "~/Dropbox/org/inbox.org"
+						 "~/Dropbox/org/reminders.org"))
+
+
+(setq org-capture-templates '(("t" "Todo [inbox]" entry
+                               (file+headline "~/Dropbox/org/inbox.org" "Tasks")
+                               "* TODO %i%?")
+                              ("r" "Reminder" entry
+                               (file+headline "~/Dropbox/org/reminders.org" "Reminder")
+                               "* %i%? \n %U")))
+
+(setq org-refile-targets '(("~/Dropbox/org/gtd_curr.org" :maxlevel . 5)
+                           ("~/Dropbox/org/someday.org" :level . 1)
+                           ("~/Dropbox/org/reminders.org" :maxlevel . 2)))
+
+(setq org-todo-keywords '((sequence "TODO(t)" "BLOCKED(b)" "|" "DONE(d)" "CANCELLED(c)")))
 
 ;; OCaml
 (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
@@ -111,3 +128,12 @@
 ;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
 (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
 ;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+
+
+;; auctex
+(require 'tex-site)
+(setq TeX-auto-save t)
+(setq TeX-parse-self t)
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+(setq reftex-plug-into-AUCTex t)
+(global-font-lock-mode t)
