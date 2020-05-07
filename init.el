@@ -1,113 +1,277 @@
+;;; init.el --- Initialization file for Emacs
+;;; Commentary:
+;; Eric Lai
+;; - git must be installed
+;; - the straight.el bootstrap must be before any other package
+;; - use-package must be installed right after straight
 
-;; Add Melpa Source
-(require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+;;; Code:
 
-;; Add Local Directories to Load Path
-(add-to-list 'load-path "~/.emacs.d/extras")
-
-;; Initialize Package
-(package-initialize)
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(elpy-rpc-python-command "python")
- '(inhibit-startup-screen t)
- '(org-todo-keywords
-   (quote
-	((sequence "TODO(t)" "IN_PROGRESS(p)" "BLOCKED(b)" "DONE(d)"))))
- '(package-selected-packages
-   (quote
-	(impatient-mode gnu-elpa-keyring-update flycheck elpy multiple-cursors magit moe-theme))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
-
-;; Moe Theme Mode Switching (Sunrise/Sunset)
-(require 'moe-theme-switcher)
-(setq calendar-latitude +40)
-(setq calendar-longitude -74)
-
-;;;;;;;;;;; CONFIGS FOR PACKAGES
-
-;; Multiple Cursors
-
-(require 'multiple-cursors)
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; straight.el bootstrap		   		   ;;
+;; https://github.com/raxod502/straight.el ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
 
-;; Fill Column Indicator
-
-(require 'fill-column-indicator)
-(setq fci-rule-width 1)
-(setq fci-rule-color "turquoise1")
-(add-hook 'after-change-major-mode-hook 'fci-mode)
-
-;; Python Development
-
-(elpy-enable)
-(when (require 'flycheck nil t)
-  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-  (add-hook 'elpy-mode-hook 'flycheck-mode))
-(require 'py-autopep8)
-(add-hook 'elpy-mode-hook 'py-autopep8-enable-on-save)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; use-package							   ;;
+;; config management					   ;;
+;; https://github.com/jwiegley/use-package ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(straight-use-package 'use-package)
+;; use-package will use straight.el to automatically install
+;; missing packages if provided with ':straight t'
 
 
-;;;; General Config
-
+;;;;;;;;;;;;;;;;;;;;;
+;; better defaults ;;
+;;;;;;;;;;;;;;;;;;;;;
 (global-linum-mode t)
 (setq-default tab-width 4)
-(setq-default fill-column 80)
-(defvaralias 'c-basic-offset 'tab-width)
-(defvaralias 'cperl-indent-level 'tab-width)
-(tool-bar-mode -1)
-(toggle-scroll-bar -1)
+(tool-bar-mode 0)
+(toggle-scroll-bar 0)
+(tooltip-mode 0)
+(menu-bar-mode 0)
+(setq inhibit-startup-screen t)
 
 
-;; Backup/Autosave
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; neotree	     				 				  ;;
+;; directory sidebar 				  			  ;;
+;; https://github.com/jaypei/emacs-neotree	  	  ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (use-package neotree
+;;   :straight t
+;;   :bind ([f8] . neotree-toggle)
+;;   :custom
+;;   (neo-theme (if (display-graphic-p) 'ascii))
+;;   (neo-smart-open t "opens at current buffer's file location")
+;;   :custom-face
+;;   (neo-expand-btn-face ((t (:background "#FFFFFF")))) ;; replace with light theme color
+;;   (neo-expand-btn-face ((((background dark)) (:background "#303030")))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Sr Speedbar								  					    ;;
+;; speedbar in the same fram				  					    ;;
+;; https://www.emacswiki.org/emacs/SrSpeedbar 					    ;;
+;; https://www.gnu.org/software/emacs/manual/html_node/speedbar/    ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package sr-speedbar
+  :straight t
+  :bind ([f8] . sr-speedbar-toggle)
+  :custom
+  (speedbar-use-images nil "disable icons")
+  (speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'"))
+	
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ace-window							 ;;
+;; better window switching				 ;;
+;; https://github.com/abo-abo/ace-window ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package ace-window
+  :straight t
+  :bind ("M-o" . ace-window)
+  :custom
+  (aw-dispatch-always 1))
+
+
+;;;;;;;;;;;
+;; theme ;;
+;;;;;;;;;;;
+(use-package moe-theme
+  :straight t
+  :config
+  (require 'moe-theme-switcher)
+  :custom
+  (calendar-latitude +40 "theme mode switching (sunrise/sunset)")
+  (calendar-longitude -74))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; HideShow				 ;;
+;; code folding, builtin ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defun toggle-selective-display (column)
+  ;; hides code based on indentation level
+  (interactive "P")
+  (set-selective-display
+   (or column
+	   (unless selective-display
+		 (1+ (current-column))))))
+
+(defun toggle-hiding (column)
+  ;; smart hiding, uses selective-display as fallback
+  (interactive "P")
+  (if hs-minor-mode
+	  (if (condition-case nil
+			  (hs-toggle-hiding)
+			(error t))
+		  (hs-show-all))
+	(toggle-selective-display column)))
+
+(load-library "hideshow")
+(global-set-key (kbd "C-+") 'toggle-hiding)
+(global-set-key (kbd "C-\\") 'toggle-selective-display)
+(add-hook 'c-mode-common-hook   'hs-minor-mode)
+(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+(add-hook 'java-mode-hook       'hs-minor-mode)
+(add-hook 'lisp-mode-hook       'hs-minor-mode)
+(add-hook 'perl-mode-hook       'hs-minor-mode)
+(add-hook 'sh-mode-hook         'hs-minor-mode)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; File Backups/Autosave ;;
+;; change location		 ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(if (file-directory-p "~/.emacs.d/backup/")
+	nil
+  (make-directory "~/.emacs.d/backup/"))
+(if (file-directory-p "~/.emacs.d/autosave/")
+	nil
+  (make-directory "~/.emacs.d/autosave/"))
 (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
 (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
 (setq backup-directory-alist (list (cons ".*" backup-dir)))
 (setq auto-save-list-file-prefix autosave-dir)
 (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
 
-;; fixed error in emacs versions <= 26.2
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
-;; impatient mode function for markdown files
-(defun markdown-html (buffer)
-  (princ (with-current-buffer buffer
-		   (format "<!DOCTYPE html><html><title>Impatient Markdown</title><xmp theme=\"united\" style=\"display:none;\"> %s  </xmp><script src=\"http://strapdownjs.com/v/0.2/strapdown.js\"></script></html>" (buffer-substring-no-properties (point-min) (point-max))))
-		 (current-buffer)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Projectile							 ;;
+;; project management					 ;;
+;; https://github.com/bbatsov/projectile ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package projectile
+  :straight t
+  :config
+  (projectile-mode +1)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  :custom
+  (projectile-completion-system 'ivy "use ivy for projectile completion backend"))
 
-;; Org Mode
-(add-hook 'org-mode-hook 'org-indent-mode)
-(setq org-log-done 'time)
-(setq org-log-done 'note)
 
-;; OCaml
-(let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var" "share")))))
-      (when (and opam-share (file-directory-p opam-share))
-       ;; Register Merlin
-       (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
-       (autoload 'merlin-mode "merlin" nil t nil)
-       ;; Automatically start it in OCaml buffers
-       (add-hook 'tuareg-mode-hook 'merlin-mode t)
-       (add-hook 'caml-mode-hook 'merlin-mode t)
-       ;; Use opam switch to lookup ocamlmerlin binary
-       (setq merlin-command 'opam)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Counsel - Ivy, Swiper			 ;;
+;; completion interface				 ;;
+;; https://github.com/abo-abo/swiper ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package counsel
+  :straight t
+  :config
+  (ivy-mode 1)
+  :custom
+  (ivy-use-virtual-buffers t)
+  (ivy-count-format "[%d/%d] "))
 
-(add-to-list 'load-path "/home/yun/.opam/system/share/emacs/site-lisp")
-(require 'ocp-indent)
-;; ## added by OPAM user-setup for emacs / base ## 56ab50dc8996d2bb95e7856a6eddb17b ## you can edit, but keep this line
-(require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-;; ## end of OPAM user-setup addition for emacs / base ## keep this line
+
+;;;;;;;;;;;;;;;;;;;;;;;
+;; Magit			 ;;
+;; git interface	 ;;
+;; https://magit.vc/ ;;
+;;;;;;;;;;;;;;;;;;;;;;;
+(use-package magit
+  :straight t
+  :bind ("C-x g" . magit-status))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Symon						    ;;
+;; system monitor in minibuffer	    ;;
+;; https://github.com/zk-phi/symon/ ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package symon
+  :straight t
+  :config
+  (symon-mode))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Flycheck										 ;;
+;; syntax checking								 ;;
+;; https://www.flycheck.org/en/latest/index.html ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Emacs 24.3+, disable if buggy on windows
+(use-package flycheck
+  :straight t
+  :init
+  (global-flycheck-mode))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;; Python ;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add-hook 'python-mode-hook 'hs-minor-mode) ;; elpy code folding compatibility
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Elpy	(multiple dependencies)			 ;;
+;; python development environment		 ;;
+;; https://elpy.readthedocs.io/en/latest ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package elpy
+  :straight t
+  :defer t
+  :init
+  (advice-add 'python-mode :before 'elpy-enable) ;; defer loading
+  :config
+  (when (load "flycheck" t t)  ;; use flycheck instead of flymake for syntax checking backend
+	(setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+	(add-hook 'elpy-mode-hook 'flycheck-mode))
+  :custom
+  (elpy-folding-fringe-indicators t "enable code folding fringe indicators")
+  (elpy-modules
+   '(elpy-module-company
+  	 elpy-module-eldoc
+  	 elpy-module-flymake
+  	 elpy-module-folding
+  	 elpy-module-pyvenv
+  	 elpy-module-highlight-indentation
+  	 elpy-module-yasnippet
+  	 elpy-module-django
+  	 elpy-module-sane-defaults) "activate elpy modules")
+  :custom-face
+  (elpy-folding-fringe-face ((t (:inherit (quote font-lock-keyword-face) :box (:line-width 1 :style released-button))))))
+;; run elpy-config to get external dependencies
+;; might want to switch to flycheck in the future
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;; LaTeX ;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; AUCTeX										  ;;
+;; support for TeX and TeX macro packages		  ;;
+;; https://www.gnu.org/software/auctex/index.html ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package tex ;;workaround because auctex is old
+  :straight auctex
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t))
+  
+;;;;;;;;;;;;;;;;;;;;;;
+;; still needed:    ;;
+;; markdown preview ;;
+;; org mode config  ;;
+;; Ocaml    	    ;;
+;; c/c++		    ;;
+;;;;;;;;;;;;;;;;;;;;;;
+
+;; disable flycheck for this file
+
+;; Local Variables:
+;; flycheck-disabled-checkers: emacs-lisp-checkdoc
+;; End:

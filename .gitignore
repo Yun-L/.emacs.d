@@ -1,8 +1,6 @@
-# Session Specific Files
-eshell/*
-auto-save-list/*
-games/*
-backup/*
-autosave/*
-session.*
-*.pyc
+# Ignore everything
+*
+
+# Exceptions
+!init.el
+!README.md
