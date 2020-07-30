@@ -1,5 +1,6 @@
 # Ignore everything
 *
+*/
 
 # Exceptions
 !init.el
