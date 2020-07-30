@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# Exceptions
+!.gitignore
+!init.el
+!README.md
