@@ -1,7 +1,0 @@
-# Ignore everything
-*
-*/
-
-# Exceptions
-!init.el
-!README.md
