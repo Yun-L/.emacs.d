@@ -95,6 +95,8 @@
 (use-package moe-theme
   :straight t
   :config
+  (moe-theme-set-color 'magenta)
+  (moe-light)
   (require 'moe-theme-switcher)
   :custom
   (calendar-latitude +40 "theme mode switching (sunrise/sunset)")
