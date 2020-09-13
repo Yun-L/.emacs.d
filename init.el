@@ -45,22 +45,14 @@
 (tooltip-mode 0)
 (menu-bar-mode 0)
 (setq inhibit-startup-screen t)
+(setq ring-bell-function 'ignore)
+(setq create-lockfiles nil)
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; neotree	     				 				  ;;
-;; directory sidebar 				  			  ;;
-;; https://github.com/jaypei/emacs-neotree	  	  ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; (use-package neotree
-;;   :straight t
-;;   :bind ([f8] . neotree-toggle)
-;;   :custom
-;;   (neo-theme (if (display-graphic-p) 'ascii))
-;;   (neo-smart-open t "opens at current buffer's file location")
-;;   :custom-face
-;;   (neo-expand-btn-face ((t (:background "#FFFFFF")))) ;; replace with light theme color
-;;   (neo-expand-btn-face ((((background dark)) (:background "#303030")))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; common lisp compatibility ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package cl-lib
+  :straight t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -191,17 +183,6 @@
   :bind ("C-x g" . magit-status))
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Symon						    ;;
-;; system monitor in minibuffer	    ;;
-;; https://github.com/zk-phi/symon/ ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(use-package symon
-  :straight t
-  :config
-  (symon-mode))
-
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Flycheck										 ;;
 ;; syntax checking								 ;;
@@ -272,8 +253,78 @@
 ;; c/c++		    ;;
 ;;;;;;;;;;;;;;;;;;;;;;
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;; Org Mode ;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; GTD Setup					   ;;
+;; task keeping/project management ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+
+(setq gtd-files '("~/Dropbox/gtd/inbox.org"
+				  "~/Dropbox/gtd/gtd.org"
+				  "~/Dropbox/gtd/reminders.org"
+				  "~/Dropbox/gtd/someday.org"))
+
+(defun check-exists (list)
+  "t if all files in 'list' exist"
+  (eval `(and ,@(mapcar
+				 (lambda (filename) (file-exists-p filename))
+				 list))))
+
+
+(when (check-exists gtd-files)
+  (setq org-agenda-files '("~/Dropbox/gtd/inbox.org"
+						   "~/Dropbox/gtd/gtd.org"
+						   "~/Dropbox/gtd/reminders.org"))
+  (setq org-capture-templates '(("t" "Todo [inbox]" entry
+								 (file+headline "~/Dropbox/gtd/inbox.org" "Tasks")
+								 "* TODO %i%?")
+								("r" "Reminder" entry
+								 (file+headline "~/Dropbox/gtd/reminders.org" "Reminder")
+								 "* %i%? \n %U")))
+  (setq org-refile-targets '(("~/Dropbox/gtd/gtd.org" :maxlevel . 3)
+							 ("~/Dropbox/gtd/someday.org" :level . 1)
+							 ("~/Dropbox/gtd/reminders.org" :maxlevel . 2)))
+  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
+  (setq org-agenda-custom-commands 
+		'(("o" "At the office" tags-todo "@office"
+		   ((org-agenda-overriding-header "Office")
+			(org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))))	
+  (defun my-org-agenda-skip-all-siblings-but-first ()
+	"Skip all but the first non-done entry."
+	(let (should-skip-entry)
+	  (unless (org-current-is-todo)
+		(setq should-skip-entry t))
+	  (save-excursion
+		(while (and (not should-skip-entry) (org-goto-sibling t))
+		  (when (org-current-is-todo)
+			(setq should-skip-entry t))))
+	  (when should-skip-entry
+		(or (outline-next-heading)
+			(goto-char (point-max))))))
+  (defun org-current-is-todo ()
+	(string= "TODO" (org-get-todo-state))))
+	  
+
 ;; disable flycheck for this file
 
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(safe-local-variable-values '((eval visual-line-mode t))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(elpy-folding-fringe-face ((t (:inherit 'font-lock-keyword-face :box (:line-width 1 :style released-button))))))
 ;; Local Variables:
 ;; flycheck-disabled-checkers: emacs-lisp-checkdoc
 ;; End:
