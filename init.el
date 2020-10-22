@@ -251,19 +251,20 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; Org Mode ;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(require 'org)
+(setq org-agenda-block-separator nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; GTD Setup					   ;;
 ;; task keeping/project management ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
 
 (setq gtd-files '("~/Dropbox/gtd/inbox.org"
-				  "~/Dropbox/gtd/gtd.org"
+				  "~/Dropbox/gtd/projects.org"
 				  "~/Dropbox/gtd/reminders.org"
-				  "~/Dropbox/gtd/someday.org"))
+				  "~/Dropbox/gtd/someday.org"
+				  "~/Dropbox/gtd/calendar.org"))
 
 (defun check-exists (list)
   "t if all files in 'list' exist"
@@ -273,38 +274,55 @@
 
 
 (when (check-exists gtd-files)
+  (defun open-gtd-projects ()
+	(interactive)
+	(find-file "~/Dropbox/gtd/projects.org"))
+  (defun open-gtd-inbox ()
+	(interactive)
+	(find-file "~/Dropbox/gtd/inbox.org"))
+  (defun open-gtd-reminders ()
+	(interactive)
+	(find-file "~/Dropbox/gtd/reminders.org"))
+
+  (global-set-key (kbd "C-c g a") 'org-agenda)
+  (global-set-key (kbd "C-c g c") 'org-capture)
+  (global-set-key (kbd "C-c g p") 'open-gtd-projects)
+  (global-set-key (kbd "C-c g i") 'open-gtd-inbox)
+  (global-set-key (kbd "C-c g r") 'open-gtd-reminders)
+  
   (setq org-agenda-files '("~/Dropbox/gtd/inbox.org"
-						   "~/Dropbox/gtd/gtd.org"
-						   "~/Dropbox/gtd/reminders.org"))
+						   "~/Dropbox/gtd/projects.org"
+						   "~/Dropbox/gtd/reminders.org"
+						   "~/Dropbox/gtd/calendar.org"))
   (setq org-capture-templates '(("t" "Todo [inbox]" entry
 								 (file+headline "~/Dropbox/gtd/inbox.org" "Tasks")
 								 "* TODO %i%?")
 								("r" "Reminder" entry
-								 (file+headline "~/Dropbox/gtd/reminders.org" "Reminder")
+								 (file+headline "~/Dropbox/gtd/reminders.org" "Reminders")
 								 "* %i%? \n %U")))
-  (setq org-refile-targets '(("~/Dropbox/gtd/gtd.org" :maxlevel . 3)
+  (setq org-refile-targets '(("~/Dropbox/gtd/projects.org" :maxlevel . 3)
 							 ("~/Dropbox/gtd/someday.org" :level . 1)
 							 ("~/Dropbox/gtd/reminders.org" :maxlevel . 2)))
-  (setq org-todo-keywords '((sequence "TODO(t)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
-  (setq org-agenda-custom-commands 
-		'(("o" "At the office" tags-todo "@office"
-		   ((org-agenda-overriding-header "Office")
-			(org-agenda-skip-function #'my-org-agenda-skip-all-siblings-but-first)))))	
-  (defun my-org-agenda-skip-all-siblings-but-first ()
-	"Skip all but the first non-done entry."
-	(let (should-skip-entry)
-	  (unless (org-current-is-todo)
-		(setq should-skip-entry t))
-	  (save-excursion
-		(while (and (not should-skip-entry) (org-goto-sibling t))
-		  (when (org-current-is-todo)
-			(setq should-skip-entry t))))
-	  (when should-skip-entry
-		(or (outline-next-heading)
-			(goto-char (point-max))))))
-  (defun org-current-is-todo ()
-	(string= "TODO" (org-get-todo-state))))
-	  
+  (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "|"
+									  "DONE(d)" "CANCELLED(c)" "DEFERRED(D)")))
+  (setq org-agenda-custom-commands
+		'(("1" "My Agenda"
+           ((agenda ""
+					((org-agenda-span 'day)
+					 (org-deadline-warning-days 365)))
+			(todo "TODO"
+				  ((org-agenda-overriding-header "To Refile:")
+				   (org-agenda-files '("~/Dropbox/gtd/inbox.org"))))
+			(todo "NEXT"
+				  ((org-agenda-overriding-header "In Progress:")
+                   (org-agenda-files '("~/Dropbox/gtd/projects.org"))))
+			(todo "WAITING"
+				  ((org-agenda-overriding-header "Waiting:")
+                   (org-agenda-files '("~/Dropbox/gtd/projects.org")))))
+		   nil)))
+  )
+
+
 
 ;; disable flycheck for this file
 
