@@ -88,12 +88,7 @@
   :straight t
   :config
   (moe-theme-set-color 'magenta)
-  (moe-light)
-  (require 'moe-theme-switcher)
-  :custom
-  (calendar-latitude +40 "theme mode switching (sunrise/sunset)")
-  (calendar-longitude -74))
-
+  (moe-dark))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; HideShow				 ;;
