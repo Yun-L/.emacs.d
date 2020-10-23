@@ -190,6 +190,8 @@
   (global-flycheck-mode))
 
 
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;; Python ;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (add-hook 'python-mode-hook 'hs-minor-mode) ;; elpy code folding compatibility
@@ -224,6 +226,34 @@
   (elpy-folding-fringe-face ((t (:inherit (quote font-lock-keyword-face) :box (:line-width 1 :style released-button))))))
 ;; run elpy-config to get external dependencies
 ;; might want to switch to flycheck in the future
+
+;;;;;;;;;;;;;;;;;;;;;;;;;; Erlang ;;;;;;;;;;;;;;;;;;;;;;;
+
+;; download erlang -> erlang-solutions.com or erlang.org
+;; erlang-mode comes with the erlang distribution
+;; TODO switch paths between unix and windows
+(setq erlang-load-path "C:/Program Files/erl-23.0/lib/tools-3.4/emacs")
+(setq erlang-root-dir "C:/Program Files/erl-23.0")
+(setq exec-path (cons "C:/Program Files/erl-23.0/bin" exec-path))
+
+(use-package erlang-start
+  :load-path erlang-load-path
+  :config
+  (when (load "flycheck" t t)
+	(flycheck-define-checker erlang-otp
+      "An Erlang syntax checker using the Erlang interpreter."
+      :command ("erlc" "-o" temporary-directory "-Wall"
+				"-I" "../include" "-I" "../../include"
+				"-I" "../../../include" source)
+      :error-patterns
+      ((warning line-start (file-name) ":" line ": Warning:" (message) line-end)
+       (error line-start (file-name) ":" line ": " (message) line-end))
+	  :modes (erlang-mode))
+	(add-hook 'erlang-mode-hook
+			  (lambda ()
+				(flycheck-select-checker 'erlang-otp)
+				(flycheck-mode)))))
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; LaTeX ;;;;;;;;;;;;;;;;;;;;;;;;;
