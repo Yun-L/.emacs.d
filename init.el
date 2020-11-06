@@ -203,6 +203,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package elpy
   :straight t
+  :after (flycheck)
   :defer t
   :init
   (advice-add 'python-mode :before 'elpy-enable) ;; defer loading
@@ -231,13 +232,19 @@
 
 ;; download erlang -> erlang-solutions.com or erlang.org
 ;; erlang-mode comes with the erlang distribution
-;; TODO switch paths between unix and windows
+;; TODO split configs for different machines to another file
 (setq erlang-load-path "C:/Program Files/erl-23.0/lib/tools-3.4/emacs")
 (setq erlang-root-dir "C:/Program Files/erl-23.0")
 (setq exec-path (cons "C:/Program Files/erl-23.0/bin" exec-path))
 
+(when (eq system-type 'gnu/linux)
+  (setq erlang-load-path "/usr/lib/erlang/lib/tools-3.4.1/emacs")
+  (setq erlang-root-dir "/usr/lib/erlang")
+  (setq exec-path (cons "/usr/lib/erlang/bin" exec-path)))
+
 (use-package erlang-start
   :load-path erlang-load-path
+  :after (flycheck)
   :config
   (when (load "flycheck" t t)
 	(flycheck-define-checker erlang-otp
