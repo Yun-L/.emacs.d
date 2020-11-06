@@ -190,6 +190,15 @@
   (global-flycheck-mode))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Company				  ;;
+;; inbuffer auto complete ;;
+;; company-mode.github.io ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package company
+  :straight t
+  :init
+  (global-company-mode))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; Python ;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -230,13 +239,16 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;; Erlang ;;;;;;;;;;;;;;;;;;;;;;;
 
-;; download erlang -> erlang-solutions.com or erlang.org
-;; erlang-mode comes with the erlang distribution
-;; TODO split configs for different machines to another file
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Erlang Mode												    ;;
+;; comes with erlang dist -> erlang-solutions.com or erlang.org ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq erlang-load-path "C:/Program Files/erl-23.0/lib/tools-3.4/emacs")
 (setq erlang-root-dir "C:/Program Files/erl-23.0")
 (setq exec-path (cons "C:/Program Files/erl-23.0/bin" exec-path))
 
+
+;; TODO split configs for different machines to another file
 (when (eq system-type 'gnu/linux)
   (setq erlang-load-path "/usr/lib/erlang/lib/tools-3.4.1/emacs")
   (setq erlang-root-dir "/usr/lib/erlang")
@@ -246,22 +258,56 @@
   :load-path erlang-load-path
   :after (flycheck)
   :config
-  (when (load "flycheck" t t)
-	(flycheck-define-checker erlang-otp
-      "An Erlang syntax checker using the Erlang interpreter."
-      :command ("erlc" "-o" temporary-directory "-Wall"
-				"-I" "../include" "-I" "../../include"
-				"-I" "../../../include" source)
-      :error-patterns
-      ((warning line-start (file-name) ":" line ": Warning:" (message) line-end)
-       (error line-start (file-name) ":" line ": " (message) line-end))
-	  :modes (erlang-mode))
-	(add-hook 'erlang-mode-hook
-			  (lambda ()
-				(flycheck-select-checker 'erlang-otp)
-				(flycheck-mode)))))
+  (flycheck-define-checker erlang-otp
+    "An Erlang syntax checker using the Erlang interpreter."
+    :command ("erlc" "-o" temporary-directory "-Wall"
+			  "-I" "../include" "-I" "../../include"
+			  "-I" "../../../include" source)
+    :error-patterns
+    ((warning line-start (file-name) ":" line ": Warning:" (message) line-end)
+     (error line-start (file-name) ":" line ": " (message) line-end))
+	:modes (erlang-mode))
+  (add-hook 'erlang-mode-hook
+			(lambda ()
+			  (flycheck-select-checker 'erlang-otp)
+			  (flycheck-mode))))
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Distel							    ;;
+;; Emacs erlang tools/library		    ;;
+;; https://github.com/massemanet/distel ;;
+;; clone ^ into ~/emacs.d and compile   ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package distel
+  :load-path "~/.emacs.d/distel/elisp/"
+  :after (erlang-start)
+  :config
+  (distel-setup)
+  (setq inferior-erlang-machine-options '("-sname" "emacs")))
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Company Distel		  ;;
+;; erlang company backend ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package company-distel
+  :straight t
+  :after (distel company)
+  :config
+  (add-to-list 'company-backend 'company-distel))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Company Distel Frontend		 ;;
+;; required after company distel ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; (use-package company-distel-frontend
+;;   :load-path "~/.emacs.d/company-distel"
+;;   (add-hook 'erlang-mode-hook
+;; 			(lambda ()
+;; 			  (setq company-backends '(company-distel)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;; LaTeX ;;;;;;;;;;;;;;;;;;;;;;;;;
 
