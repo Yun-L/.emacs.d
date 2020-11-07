@@ -217,9 +217,9 @@
   :init
   (advice-add 'python-mode :before 'elpy-enable) ;; defer loading
   :config
-  (when (load "flycheck" t t)  ;; use flycheck instead of flymake for syntax checking backend
-	(setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-	(add-hook 'elpy-mode-hook 'flycheck-mode))
+  ;; use flycheck instead of flymake for syntax checking backend
+  (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+  (add-hook 'elpy-mode-hook 'flycheck-mode)
   :custom
   (elpy-folding-fringe-indicators t "enable code folding fringe indicators")
   (elpy-modules
