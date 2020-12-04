@@ -309,6 +309,18 @@
 ;; 			(lambda ()
 ;; 			  (setq company-backends '(company-distel)))))
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;; Promela, Spin ;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Promela Mode									  ;;
+;; syntax highlighting and formatting for promela ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package promela-mode
+  :straight (promela-mode :type git :host github :repo "rudi/promela-mode")
+  :config
+  (add-to-list 'auto-mode-alist '("\\.pml\\'" . promela-mode)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;; LaTeX ;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
