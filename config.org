@@ -1,9 +1,3 @@
--*- eval: (visual-line-mode t) -*-
-#+STARTUP: showall
-#+STARTUP: indent
-#+STARTUP: hidestars
-
-
 * Emacs Config
 - Eric Lai
 
@@ -35,7 +29,6 @@
 #+end_src
 
 * Preferences
-
 ** better defaults
 #+begin_src emacs-lisp
   (global-linum-mode t)
@@ -167,7 +160,6 @@
 #+end_src
 
 ** Python
-
 *** elpy code folding compatibility
 #+begin_src emacs-lisp
   (add-hook 'python-mode-hook 'hs-minor-mode)
@@ -205,7 +197,6 @@
 #+end_src
 
 ** LaTeX
-
 *** AUCTeX
 - support for TeX and TeX macro packages
 #+begin_src emacs-lisp
@@ -216,7 +207,18 @@
     (TeX-parse-self t))
 #+end_src
 
+** C++
+
 * Org Mode
+** defaults
+- indent org files 
+#+begin_src emacs-lisp
+  (setq org-startup-indented t)
+#+end_src
+- keep everything collapsed when first visiting an org file
+#+begin_src emacs-lisp
+  (setq org-startup-folded nil)
+#+end_src
 
 ** GTD
 - task keeping setup
