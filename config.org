@@ -137,16 +137,28 @@
 #+end_src
 
 ** moe-theme
+- color theme
 #+begin_src emacs-lisp
   (use-package moe-theme
     :straight t
+    :after (powerline)
     :config
     (moe-theme-set-color 'magenta)
-    (moe-dark))
+    (moe-dark)
+    (show-paren-mode t)
+    (powerline-moe-theme)
+    :custom
+    (show-paren-style 'expression)
+    :bind
+    (("C-c t d" . (lambda ()
+                   (interactive)
+                   (moe-dark)))
+    ("C-c t l" . (lambda ()
+                   (interactive)
+                   (moe-light)))))
 #+end_src
 
 * Programming
-
 ** magit 
 - git interface
 - https://magit.vc/
