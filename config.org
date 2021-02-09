@@ -129,6 +129,13 @@
 #+end_src
 
 * Appearance
+** powerline
+- better status bar
+#+begin_src emacs-lisp
+  (use-package powerline
+    :straight t)
+#+end_src
+
 ** moe-theme
 #+begin_src emacs-lisp
   (use-package moe-theme
