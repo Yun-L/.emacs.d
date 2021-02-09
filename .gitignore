@@ -4,4 +4,5 @@
 # Exceptions
 !init.el
 !config.org
+!archived_blocks.el
 !README.md
