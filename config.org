@@ -114,6 +114,30 @@
     (projectile-completion-system 'ivy "use ivy for projectile completion backend"))
 #+end_src
 
+** workgroups
+- workspace management
+#+begin_src emacs-lisp
+  (use-package workgroups
+    :disabled
+    :straight t
+    :config
+    (workgroups-mode t)
+    :custom
+    (wg-prefix-key (kbd "C-c w")))
+#+end_src
+
+** persp-mode
+- workspace management (shared among frames)
+#+begin_src emacs-lisp
+  (use-package persp-mode
+    :straight t
+    :config
+    (add-hook 'window-setup-hook #'(lambda () (persp-mode 1)))
+    :custom
+    (persp-keymap-prefix (kbd "C-c w"))
+    (persp-autokill-buffer-on-remove 'kill-weak))
+#+end_src
+
 ** ivy
 - completion framework
 - replaces built in ido functionality
