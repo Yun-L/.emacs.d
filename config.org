@@ -1,0 +1,435 @@
+* Emacs Config
+- Eric Lai
+
+* Setup
+** straight.el
+- package management bootstrap code (must be before other packages)
+- requires git
+- https://github.com/raxod502/straight.el
+#+begin_src emacs-lisp
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
+#+end_src
+
+** use-package
+- must be installed right after straight.el
+- config management
+#+begin_src emacs-lisp
+  (straight-use-package 'use-package)
+#+end_src
+- enable package statistics (must be enabled right after use-package installation)
+- run cmd M-x use-package-report to see results
+#+begin_src emacs-lisp
+  (setq use-package-compute-statistics t)
+#+end_src
+
+* Preferences
+** better defaults
+#+begin_src emacs-lisp
+  (global-linum-mode t)
+  (global-visual-line-mode 1)
+  (setq-default tab-width 4)
+  (defalias 'yes-or-no-p 'y-or-n-p)
+  (tool-bar-mode 0)
+  (scroll-bar-mode 0)
+  (tooltip-mode 0)
+  (menu-bar-mode 0)
+  (setq inhibit-startup-screen t)
+#+end_src
+
+- quick access to configs
+#+begin_src emacs-lisp
+  (defun find-user-config-file ()
+    (interactive)
+    (if (file-exists-p "~/.emacs.d/config.org")
+        (find-file "~/.emacs.d/config.org")
+      (error "%s" "no config.org file found in ~/.emacs.d/")))
+
+  (global-set-key (kbd "C-~") 'find-user-config-file)
+#+end_src
+
+** file backups/autosave
+- creates the following directories and saves backups/autosaves to them:
+  - .emacs.d/backup/
+  - .emacs.d/autosave/
+#+begin_src emacs-lisp
+  (if (file-directory-p "~/.emacs.d/backup/")
+      nil
+    (make-directory "~/.emacs.d/backup/"))
+  (if (file-directory-p "~/.emacs.d/autosave/")
+      nil
+    (make-directory "~/.emacs.d/autosave/"))
+  (defvar backup-dir (expand-file-name "~/.emacs.d/backup/"))
+  (defvar autosave-dir (expand-file-name "~/.emacs.d/autosave/"))
+  (setq backup-directory-alist (list (cons ".*" backup-dir)))
+  (setq auto-save-list-file-prefix autosave-dir)
+  (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
+#+end_src
+
+* Interface
+** ace-window
+- better window switching
+- https://github.com/abo-abo/ace-window
+#+begin_src emacs-lisp
+  (use-package ace-window
+    :straight t
+    :bind ("M-o" . ace-window)
+    :custom
+    (aw-dispatch-always 1))
+#+end_src
+
+** sr-speedbar
+- speedbar in the same frame
+- https://www.emacswiki.org/emacs/SrSpeedbar
+- https://www.gnu.org/software/emacs/manual/html_node/speedbar/
+#+begin_src emacs-lisp
+  (use-package sr-speedbar
+    :straight t
+    :bind ([f8] . sr-speedbar-toggle)
+    :custom
+    (speedbar-use-images nil "disable icons")
+    (speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'"))
+#+end_src
+
+** projectile
+- project management
+- https://github.com/bbatsov/projectile
+#+begin_src emacs-lisp
+  (use-package projectile
+    :straight t
+    :config
+    (projectile-mode +1)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    :custom
+    (projectile-completion-system 'ivy "use ivy for projectile completion backend"))
+#+end_src
+
+** workgroups
+- workspace management
+#+begin_src emacs-lisp
+  (use-package workgroups
+    :disabled
+    :straight t
+    :config
+    (workgroups-mode t)
+    :custom
+    (wg-prefix-key (kbd "C-c w")))
+#+end_src
+
+** persp-mode
+- workspace management (shared among frames)
+#+begin_src emacs-lisp
+  (use-package persp-mode
+    :straight t
+    :config
+    (add-hook 'window-setup-hook #'(lambda () (persp-mode 1)))
+    :custom
+    (persp-keymap-prefix (kbd "C-c w"))
+    (persp-autokill-buffer-on-remove 'kill-weak))
+#+end_src
+
+** ivy
+- completion framework
+- replaces built in ido functionality
+- https://github.com/abo-abo/swiper
+#+begin_src emacs-lisp
+  (use-package ivy
+    :straight t
+    :config
+    (ivy-mode t)
+    :custom
+    (ivy-use-virtual-buffers t)
+    (enable-recursive-minibuffers t)
+    (ivy-count-format "[%d/%d] "))
+#+end_src
+
+** counsel
+- provides versions of common emacs commands that use ivy
+- https://github.com/abo-abo/swiper
+#+begin_src emacs-lisp
+  (use-package counsel
+    :straight t)
+#+end_src
+
+** swiper
+- ivy enhance version of isearch
+- https://github.com/abo-abo/swiper
+#+begin_src emacs-lisp
+  (use-package swiper
+    :straight t
+    :bind (("C-s" . swiper-isearch)))
+#+end_src
+
+** avy
+- jumping to visible text w/ char-based decision tree
+- https://github.com/abo-abo/avy
+#+begin_src emacs-lisp
+  (use-package avy
+    :straight t
+    :bind
+    (("C-:" . avy-goto-char)
+     ("C-;" . avy-goto-char-2))
+    :custom
+    (avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s) "change to dvorak home row keys"))
+#+end_src
+
+* Appearance
+** powerline
+- better status bar
+#+begin_src emacs-lisp
+  (use-package powerline
+    :straight t)
+#+end_src
+
+** moe-theme
+- color theme
+#+begin_src emacs-lisp
+  (use-package moe-theme
+    :straight t
+    :after (powerline)
+    :init
+     (setq moe-theme-mode-line-color 'magenta)
+    :config
+    (moe-dark)
+    (powerline-moe-theme)
+    :bind
+    (("C-c t d" . (lambda ()
+                    "switch to moe-dark theme"
+                    (interactive)
+                    (moe-dark)))
+     ("C-c t l" . (lambda ()
+                    "switch to moe-light theme"
+                    (interactive)
+                    (moe-light)))))
+#+end_src
+
+* Programming
+** magit 
+- git interface
+- https://magit.vc/
+#+begin_src emacs-lisp
+  (use-package magit
+    :straight t
+    :bind ("C-x g" . magit-status))
+#+end_src
+
+** flycheck
+- syntax checking
+- https://www.flycheck.org/en/latest/index.html
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :straight t
+    :init
+    (global-flycheck-mode))
+#+end_src
+
+** company
+- inbuffer auto complete
+#+begin_src emacs-lisp
+  (use-package company
+    :straight t
+    :init
+    (global-company-mode))
+#+end_src
+
+** Python
+*** elpy code folding compatibility
+#+begin_src emacs-lisp
+  (add-hook 'python-mode-hook 'hs-minor-mode)
+#+end_src
+
+*** elpy
+- python development environment
+- uses flycheck for syntax checking backend
+- external dependencies can be installed with elpy-config
+- https://elpy.readthedocs.io/en/latest
+#+begin_src emacs-lisp
+  (use-package elpy
+    :straight t
+    :defer t
+    :init
+    (advice-add 'python-mode :before 'elpy-enable) ;; defer loading
+    :config
+    (when (load "flycheck" t t)
+      (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+      (add-hook 'elpy-mode-hook 'flycheck-mode))
+    :custom
+    (elpy-folding-fringe-indicators t "enable code folding fringe indicators")
+    (elpy-modules
+     '(elpy-module-company
+       elpy-module-eldoc
+       elpy-module-flymake
+       elpy-module-folding
+       elpy-module-pyvenv
+       elpy-module-highlight-indentation
+       elpy-module-yasnippet
+       elpy-module-django
+       elpy-module-sane-defaults) "activate elpy modules")
+    :custom-face
+    (elpy-folding-fringe-face ((t (:inherit (quote font-lock-keyword-face) :box (:line-width 1 :style released-button))))))
+#+end_src
+
+** LaTeX
+*** AUCTeX
+- support for TeX and TeX macro packages
+#+begin_src emacs-lisp
+  (use-package tex ;;workaround because auctex is old
+    :straight auctex
+    :custom
+    (TeX-auto-save t)
+    (TeX-parse-self t))
+#+end_src
+
+** C++
+*** rtags
+- code tagging, source code navigation
+- http://www.rtags.net
+- needs to have active rtag server running
+- projects need to be indexed
+- starts rtags process on c/c++/objc modes
+- C-c r ? for help
+#+begin_src emacs-lisp
+  (use-package rtags
+    :straight t
+    :config
+    (rtags-enable-standard-keybindings)
+    (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
+    (add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
+    (add-hook 'objc-mode-hook 'rtags-start-process-unless-running)
+    (define-key c-mode-base-map (kbd "C-c r i") (function rtags-print-symbol-info))
+    (define-key c-mode-base-map (kbd "C-c r t") (function rtags-symbol-type))
+    :custom
+    (rtags-find-file-case-insensitive t))
+#+end_src
+
+*** company-rtags
+- integrate rtags with company
+#+begin_src emacs-lisp
+  (use-package company-rtags
+    :straight t
+    :after (company rtags)
+    :config
+    (push 'company-rtags company-backends)
+    (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
+    :custom
+    (rtags-completions-enabled t))
+#+end_src
+
+*** flycheck-rtags
+- syntax checker using flycheck and rtags
+#+begin_src emacs-lisp
+  (use-package flycheck-rtags
+    :straight t
+    :after (flycheck rtags)
+    :config
+    (defun my-flycheck-rtags-setup ()
+      (flycheck-select-checker 'rtags)
+      (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
+      (setq-local flycheck-check-syntax-automatically nil))
+    (add-hook 'c-mode-hook #'my-flycheck-rtags-setup)
+    (add-hook 'c++-mode-hook #'my-flycheck-rtags-setup)
+    (add-hook 'objc-mode-hook #'my-flycheck-rtags-setup)
+    :custom
+    (rtags-autostart-diagnostics t))
+#+end_src
+
+*** ivy-rtags
+- integrate rtags with ivy
+#+begin_src emacs-lisp
+  (use-package ivy-rtags
+    :straight t
+    :after (ivy rtags)
+    :custom
+    (rtags-display-result-backend 'ivy))
+#+end_src
+
+* Org Mode
+** defaults
+- indent org files 
+#+begin_src emacs-lisp
+  (setq org-startup-indented t)
+#+end_src
+- keep everything collapsed when first visiting an org file
+#+begin_src emacs-lisp
+  (setq org-startup-folded nil)
+#+end_src
+
+** GTD
+- task keeping setup
+- task files should be synced with Dropbox
+- shortcuts to open task files
+- adds custom agenda view
+- keybinds only apply when the file in gtd-files exist
+#+begin_src emacs-lisp
+  (setq gtd-files '("~/Dropbox/gtd/inbox.org"
+                    "~/Dropbox/gtd/projects.org"
+                    "~/Dropbox/gtd/reminders.org"
+                    "~/Dropbox/gtd/someday.org"
+                    "~/Dropbox/gtd/calendar.org"))
+
+  (defun check-exists (list)
+    "t if all files in 'list' exist"
+    (eval `(and ,@(mapcar
+                   (lambda (filename) (file-exists-p filename))
+                   list))))
+
+
+  (when (check-exists gtd-files)
+    (defun open-gtd-projects ()
+      (interactive)
+      (find-file "~/Dropbox/gtd/projects.org"))
+    (defun open-gtd-inbox ()
+      (interactive)
+      (find-file "~/Dropbox/gtd/inbox.org"))
+    (defun open-gtd-reminders ()
+      (interactive)
+      (find-file "~/Dropbox/gtd/reminders.org"))
+
+    (global-set-key (kbd "C-c g a") 'org-agenda)
+    (global-set-key (kbd "C-c g c") 'org-capture)
+    (global-set-key (kbd "C-c g p") 'open-gtd-projects)
+    (global-set-key (kbd "C-c g i") 'open-gtd-inbox)
+    (global-set-key (kbd "C-c g r") 'open-gtd-reminders)
+
+    (setq org-agenda-files '("~/Dropbox/gtd/inbox.org"
+                             "~/Dropbox/gtd/projects.org"
+                             "~/Dropbox/gtd/reminders.org"
+                             "~/Dropbox/gtd/calendar.org"))
+    (setq org-capture-templates '(("t" "Todo [inbox]" entry
+                                   (file+headline "~/Dropbox/gtd/inbox.org" "Tasks")
+                                   "* TODO %i%?")
+                                  ("r" "Reminder" entry
+                                   (file+headline "~/Dropbox/gtd/reminders.org" "Reminders")
+                                   "* %i%? \n %U")))
+    (setq org-refile-targets '(("~/Dropbox/gtd/projects.org" :maxlevel . 3)
+                               ("~/Dropbox/gtd/someday.org" :level . 1)
+                               ("~/Dropbox/gtd/reminders.org" :maxlevel . 2)))
+    (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "|"
+                                        "DONE(d)" "CANCELLED(c)" "DEFERRED(D)")))
+    (setq org-agenda-custom-commands
+          '(("1" "My Agenda"
+             ((agenda ""
+                      ((org-agenda-span 'day)
+                       (org-deadline-warning-days 365)))
+              (todo "TODO"
+                    ((org-agenda-overriding-header "To Refile:")
+                     (org-agenda-files '("~/Dropbox/gtd/inbox.org"))))
+              (todo "NEXT"
+                    ((org-agenda-overriding-header "In Progress:")
+                     (org-agenda-files '("~/Dropbox/gtd/projects.org"))))
+              (todo "WAITING"
+                    ((org-agenda-overriding-header "Waiting:")
+                     (org-agenda-files '("~/Dropbox/gtd/projects.org")))))
+             nil))))
+#+end_src
+
