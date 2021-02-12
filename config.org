@@ -233,6 +233,15 @@
     (global-flycheck-mode))
 #+end_src
 
+** company
+- inbuffer auto complete
+#+begin_src emacs-lisp
+  (use-package company
+    :straight t
+    :init
+    (global-company-mode))
+#+end_src
+
 ** Python
 *** elpy code folding compatibility
 #+begin_src emacs-lisp
