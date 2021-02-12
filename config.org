@@ -286,6 +286,7 @@
   (use-package tex ;;workaround because auctex is old
     :straight auctex
     :custom
+    :disabled
     (TeX-auto-save t)
     (TeX-parse-self t))
 #+end_src
