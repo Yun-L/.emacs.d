@@ -197,20 +197,20 @@
   (use-package moe-theme
     :straight t
     :after (powerline)
+    :init
+     (setq moe-theme-mode-line-color 'magenta)
     :config
-    (moe-theme-set-color 'magenta)
     (moe-dark)
-    (show-paren-mode t)
     (powerline-moe-theme)
-    :custom
-    (show-paren-style 'expression)
     :bind
     (("C-c t d" . (lambda ()
-                   (interactive)
-                   (moe-dark)))
-    ("C-c t l" . (lambda ()
-                   (interactive)
-                   (moe-light)))))
+                    "switch to moe-dark theme"
+                    (interactive)
+                    (moe-dark)))
+     ("C-c t l" . (lambda ()
+                    "switch to moe-light theme"
+                    (interactive)
+                    (moe-light)))))
 #+end_src
 
 * Programming
