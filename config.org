@@ -170,6 +170,17 @@
     :bind (("C-s" . swiper-isearch)))
 #+end_src
 
+** avy
+- jumping to visible text w/ char-based decision tree
+- https://github.com/abo-abo/avy
+#+begin_src emacs-lisp
+  (use-package avy
+    :straight t
+    :bind
+    (("C-:" . avy-goto-char)
+     ("C-;" . avy-goto-char-2))
+    :custom
+    (avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s) "change to dvorak home row keys"))
 #+end_src
 
 * Appearance
