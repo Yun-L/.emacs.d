@@ -166,7 +166,10 @@
 - https://github.com/abo-abo/swiper
 #+begin_src emacs-lisp
   (use-package swiper
-    :bind (("M-s" . counsel-grep-or-swiper)))
+    :straight t
+    :bind (("C-s" . swiper-isearch)))
+#+end_src
+
 #+end_src
 
 * Appearance
