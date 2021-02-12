@@ -27,6 +27,11 @@
 #+begin_src emacs-lisp
   (straight-use-package 'use-package)
 #+end_src
+- enable package statistics (must be enabled right after use-package installation)
+- run cmd M-x use-package-report to see results
+#+begin_src emacs-lisp
+  (setq use-package-compute-statistics t)
+#+end_src
 
 * Preferences
 ** better defaults
