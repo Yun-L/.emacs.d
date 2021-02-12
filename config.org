@@ -47,6 +47,17 @@
   (setq inhibit-startup-screen t)
 #+end_src
 
+- quick access to configs
+#+begin_src emacs-lisp
+  (defun find-user-config-file ()
+    (interactive)
+    (if (file-exists-p "~/.emacs.d/config.org")
+        (find-file "~/.emacs.d/config.org")
+      (error "%s" "no config.org file found in ~/.emacs.d/")))
+
+  (global-set-key (kbd "C-~") 'find-user-config-file)
+#+end_src
+
 ** file backups/autosave
 - creates the following directories and saves backups/autosaves to them:
   - .emacs.d/backup/
