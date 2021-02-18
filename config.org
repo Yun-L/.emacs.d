@@ -302,6 +302,7 @@
 #+begin_src emacs-lisp
   (use-package rtags
     :straight t
+    :disabled
     :config
     (rtags-enable-standard-keybindings)
     (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
@@ -318,6 +319,7 @@
 #+begin_src emacs-lisp
   (use-package company-rtags
     :straight t
+    :disabled
     :after (company rtags)
     :config
     (push 'company-rtags company-backends)
@@ -331,6 +333,7 @@
 #+begin_src emacs-lisp
   (use-package flycheck-rtags
     :straight t
+    :disabled
     :after (flycheck rtags)
     :config
     (defun my-flycheck-rtags-setup ()
@@ -349,6 +352,7 @@
 #+begin_src emacs-lisp
   (use-package ivy-rtags
     :straight t
+    :disabled
     :after (ivy rtags)
     :custom
     (rtags-display-result-backend 'ivy))
