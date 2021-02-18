@@ -46,6 +46,7 @@
   (tooltip-mode 0)
   (menu-bar-mode 0)
   (setq inhibit-startup-screen t)
+  (setq ring-bell-function 'ignore)
 #+end_src
 
 - quick access to configs
