@@ -89,6 +89,16 @@
     :config
     (global-undo-tree-mode))
 #+end_src
+
+** which-key
+- dispay keybindings after some time
+- https://github.com/justbur/emacs-which-key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :straight t
+    :config
+    (which-key-mode))
+#+end_src
 ** ace-window
 - better window switching
 - https://github.com/abo-abo/ace-window
