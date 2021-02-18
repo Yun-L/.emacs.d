@@ -168,7 +168,64 @@
     (add-hook 'window-setup-hook #'(lambda () (persp-mode 1)))
     :custom
     (persp-keymap-prefix (kbd "C-c w"))
-    (persp-autokill-buffer-on-remove 'kill-weak))
+    (persp-autokill-buffer-on-remove 'kill-weak)
+
+    (defvar after-switch-to-buffer-functions nil)
+    (defvar after-display-buffer-functions nil)
+
+    (if (fboundp 'advice-add)
+        ;;Modern way
+        (progn
+          (defun after-switch-to-buffer-adv (&rest r)
+            (apply #'run-hook-with-args 'after-switch-to-buffer-functions r))
+          (defun after-display-buffer-adv (&rest r)
+            (apply #'run-hook-with-args 'after-display-buffer-functions r))
+          (advice-add #'switch-to-buffer :after #'after-switch-to-buffer-adv)
+          (advice-add #'display-buffer   :after #'after-display-buffer-adv)))
+
+    (with-eval-after-load "persp-mode"
+      (global-set-key (kbd "C-x b") #'persp-switch-to-buffer)
+      (global-set-key (kbd "C-x k") #'persp-kill-buffer))
+  
+    (with-eval-after-load "persp-mode"
+      (with-eval-after-load "ivy"
+        (add-hook 'ivy-ignore-buffers
+                  #'(lambda (b)
+                      (when persp-mode
+                        (let ((persp (get-current-persp)))
+                          (if persp
+                              (not (persp-contain-buffer-p b persp))
+                            nil)))))
+
+        (setq ivy-sort-functions-alist
+              (append ivy-sort-functions-alist
+                      '((persp-kill-buffer   . nil)
+                        (persp-remove-buffer . nil)
+                        (persp-add-buffer    . nil)
+                        (persp-switch        . nil)
+                        (persp-window-switch . nil)
+                        (persp-frame-switch  . nil)))))))
+#+end_src
+
+** persp-mode-projectile-bridge
+- projectile integration with persp-mode
+- https://github.com/Bad-ptr/persp-mode-projectile-bridge.el
+#+begin_src emacs-lisp
+  (use-package persp-mode-projectile-bridge
+    :straight t
+    :after persp-mode
+    :config
+    (with-eval-after-load "persp-mode-projectile-bridge-autoloads"
+      (add-hook 'persp-mode-projectile-bridge-mode-hook
+                #'(lambda ()
+                    (if persp-mode-projectile-bridge-mode
+                        (persp-mode-projectile-bridge-find-perspectives-for-all-buffers)
+                      (persp-mode-projectile-bridge-kill-perspectives))))
+      (add-hook 'after-init-hook
+                #'(lambda ()
+                    (persp-mode-projectile-bridge-mode 1))
+                t)))
+#+end_src
 
 ** prescient
 - sort and filter lists of candidates (for ivy/company listing)
