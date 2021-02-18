@@ -302,6 +302,17 @@
     (global-company-mode))
 #+end_src
 
+** company-prescient
+- prescient integration with company
+- https://github.com/raxod502/prescient.el
+#+begin_src emacs-lisp
+  (use-package company-prescient
+    :straight t
+    :after (company prescient)
+    :config
+    (company-prescient-mode))
+#+end_src
+
 ** Python
 *** elpy code folding compatibility
 #+begin_src emacs-lisp
