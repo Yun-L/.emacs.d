@@ -290,9 +290,7 @@
 - https://www.flycheck.org/en/latest/index.html
 #+begin_src emacs-lisp
   (use-package flycheck
-    :straight t
-    :init
-    (global-flycheck-mode))
+    :straight t)
 #+end_src
 
 ** company
