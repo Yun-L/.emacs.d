@@ -99,6 +99,15 @@
     :config
     (which-key-mode))
 #+end_src
+
+** transpose-frame
+- transpose window arrangement
+- https://github.com/emacsmirror/emacswiki.org/blob/master/transpose-frame.el
+#+begin_src emacs-lisp
+  (use-package transpose-frame
+    :straight t)
+#+end_src
+
 ** ace-window
 - better window switching
 - https://github.com/abo-abo/ace-window
