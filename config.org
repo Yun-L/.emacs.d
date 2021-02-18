@@ -130,6 +130,8 @@
 
 ** persp-mode
 - workspace management (shared among frames)
+- manually start functionality with persp-mode
+- https://github.com/Bad-ptr/persp-mode.el
 #+begin_src emacs-lisp
   (use-package persp-mode
     :straight t
