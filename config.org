@@ -1,5 +1,6 @@
-* Emacs Config
-- Eric Lai
+#+TITLE: Emacs Config
+#+AUTHOR: Yun-L
+#+LANGUAGE: en
 
 * Setup
 ** straight.el
@@ -45,6 +46,7 @@
   (tooltip-mode 0)
   (menu-bar-mode 0)
   (setq inhibit-startup-screen t)
+  (setq ring-bell-function 'ignore)
 #+end_src
 
 - quick access to configs
@@ -77,6 +79,35 @@
 #+end_src
 
 * Interface
+** undo-tree
+- represent edit history as a tree
+- https://www.emacswiki.org/emacs/UndoTree
+- docs: https://www.dr-qubit.org/undo-tree/undo-tree.txt
+#+begin_src emacs-lisp
+  (use-package undo-tree
+    :straight t
+    :config
+    (global-undo-tree-mode))
+#+end_src
+
+** which-key
+- dispay keybindings after some time
+- https://github.com/justbur/emacs-which-key
+#+begin_src emacs-lisp
+  (use-package which-key
+    :straight t
+    :config
+    (which-key-mode))
+#+end_src
+
+** transpose-frame
+- transpose window arrangement
+- https://github.com/emacsmirror/emacswiki.org/blob/master/transpose-frame.el
+#+begin_src emacs-lisp
+  (use-package transpose-frame
+    :straight t)
+#+end_src
+
 ** ace-window
 - better window switching
 - https://github.com/abo-abo/ace-window
@@ -128,6 +159,8 @@
 
 ** persp-mode
 - workspace management (shared among frames)
+- manually start functionality with persp-mode
+- https://github.com/Bad-ptr/persp-mode.el
 #+begin_src emacs-lisp
   (use-package persp-mode
     :straight t
@@ -136,8 +169,25 @@
     :custom
     (persp-keymap-prefix (kbd "C-c w"))
     (persp-autokill-buffer-on-remove 'kill-weak))
+
+** prescient
+- sort and filter lists of candidates (for ivy/company listing)
+- https://github.com/raxod502/prescient.el
+#+begin_src emacs-lisp
+  (use-package prescient
+    :straight t)
 #+end_src
 
+** ivy-prescient
+- prescient integration with ivy
+- https://github.com/raxod502/prescient.el
+#+begin_src emacs-lisp
+  (use-package ivy-prescient
+    :straight t
+    :after (prescient ivy counsel)
+    :config
+    (ivy-prescient-mode))
+#+end_src
 ** ivy
 - completion framework
 - replaces built in ido functionality
@@ -158,7 +208,8 @@
 - https://github.com/abo-abo/swiper
 #+begin_src emacs-lisp
   (use-package counsel
-    :straight t)
+    :straight t
+    :after (ivy))
 #+end_src
 
 ** swiper
@@ -167,6 +218,7 @@
 #+begin_src emacs-lisp
   (use-package swiper
     :straight t
+    :after (ivy)
     :bind (("C-s" . swiper-isearch)))
 #+end_src
 
@@ -214,6 +266,16 @@
 #+end_src
 
 * Programming
+** YASnippet
+- template system
+- https://github.com/joaotavora/yasnippet
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :straight t
+    :config
+    (yas-global-mode 1))
+#+end_src
+
 ** magit 
 - git interface
 - https://magit.vc/
@@ -228,9 +290,7 @@
 - https://www.flycheck.org/en/latest/index.html
 #+begin_src emacs-lisp
   (use-package flycheck
-    :straight t
-    :init
-    (global-flycheck-mode))
+    :straight t)
 #+end_src
 
 ** company
@@ -240,6 +300,17 @@
     :straight t
     :init
     (global-company-mode))
+#+end_src
+
+** company-prescient
+- prescient integration with company
+- https://github.com/raxod502/prescient.el
+#+begin_src emacs-lisp
+  (use-package company-prescient
+    :straight t
+    :after (company prescient)
+    :config
+    (company-prescient-mode))
 #+end_src
 
 ** Python
