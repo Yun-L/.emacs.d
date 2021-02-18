@@ -1,5 +1,6 @@
-* Emacs Config
-- Eric Lai
+#+TITLE: Emacs Config
+#+AUTHOR: Yun-L
+#+LANGUAGE: en
 
 * Setup
 ** straight.el
