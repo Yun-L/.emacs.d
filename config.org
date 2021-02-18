@@ -266,6 +266,16 @@
 #+end_src
 
 * Programming
+** YASnippet
+- template system
+- https://github.com/joaotavora/yasnippet
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :straight t
+    :config
+    (yas-global-mode 1))
+#+end_src
+
 ** magit 
 - git interface
 - https://magit.vc/
