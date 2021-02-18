@@ -169,8 +169,25 @@
     :custom
     (persp-keymap-prefix (kbd "C-c w"))
     (persp-autokill-buffer-on-remove 'kill-weak))
+
+** prescient
+- sort and filter lists of candidates (for ivy/company listing)
+- https://github.com/raxod502/prescient.el
+#+begin_src emacs-lisp
+  (use-package prescient
+    :straight t)
 #+end_src
 
+** ivy-prescient
+- prescient integration with ivy
+- https://github.com/raxod502/prescient.el
+#+begin_src emacs-lisp
+  (use-package ivy-prescient
+    :straight t
+    :after (prescient ivy counsel)
+    :config
+    (ivy-prescient-mode))
+#+end_src
 ** ivy
 - completion framework
 - replaces built in ido functionality
