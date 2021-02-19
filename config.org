@@ -37,8 +37,8 @@
 * Preferences
 ** better defaults
 #+begin_src emacs-lisp
-  (global-linum-mode t)
   (global-visual-line-mode 1)
+  (fringe-mode '(2 . 0))
   (setq-default tab-width 4)
   (defalias 'yes-or-no-p 'y-or-n-p)
   (tool-bar-mode 0)
@@ -132,6 +132,47 @@
     (speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'"))
 #+end_src
 
+** god-mode
+- enter commands without modifier keys
+- https://github.com/emacsorphanage/god-mode
+#+begin_src emacs-lisp
+  (use-package god-mode
+    :straight t
+    :config
+    (global-set-key (kbd "<escape>") #'god-local-mode)
+    (defun my-god-mode-update-cursor ()
+      (setq cursor-type (if (or god-local-mode buffer-read-only)
+                            'box
+                          'bar)))
+
+    (add-hook 'god-mode-enabled-hook #'my-god-mode-update-cursor)
+    (add-hook 'god-mode-disabled-hook #'my-god-mode-update-cursor))
+#+end_src
+
+** treemacs
+- tree layout file explorer
+- https://github.com/Alexander-Miller/treemacs
+#+begin_src emacs-lisp
+  (use-package treemacs
+    :straight t
+    :config
+    (treemacs-follow-mode t)
+    (treemacs-filewatch-mode t)
+    (pcase (cons (not (null (executable-find "git")))
+                 (not (null treemacs-python-executable)))
+      (`(t . t)
+       (treemacs-git-mode 'deferred))
+      (`(t . _)
+       (treemacs-git-mode 'simple)))
+    :bind
+    (:map global-map
+          ("M-0"       . treemacs-select-window)
+          ("C-x t t"   . treemacs)
+          ("C-x t B"   . treemacs-bookmark)
+          ("C-x t C-t" . treemacs-find-file)
+          ("C-x t M-t" . treemacs-find-tag)))
+#+end_src
+
 ** projectile
 - project management
 - https://github.com/bbatsov/projectile
@@ -143,6 +184,15 @@
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     :custom
     (projectile-completion-system 'ivy "use ivy for projectile completion backend"))
+#+end_src
+
+** treemacs-projectile
+- projectile integration with treemacs
+- https://github.com/bbatsov/projectile
+#+begin_src emacs-lisp
+  (use-package treemacs-projectile
+    :straight t
+    :after (treemacs projectile))
 #+end_src
 
 ** workgroups
@@ -213,7 +263,7 @@
 #+begin_src emacs-lisp
   (use-package persp-mode-projectile-bridge
     :straight t
-    :after persp-mode
+    :after (persp-mode projectile)
     :config
     (with-eval-after-load "persp-mode-projectile-bridge-autoloads"
       (add-hook 'persp-mode-projectile-bridge-mode-hook
@@ -340,6 +390,15 @@
   (use-package magit
     :straight t
     :bind ("C-x g" . magit-status))
+#+end_src
+
+** treemacs-magit
+- treemacs integration with magit
+- https://github.com/bbatsov/projectile
+#+begin_src emacs-lisp
+  (use-package treemacs-magit
+    :straight t
+    :after (treemacs magit))
 #+end_src
 
 ** flycheck
