@@ -186,6 +186,15 @@
     (projectile-completion-system 'ivy "use ivy for projectile completion backend"))
 #+end_src
 
+** treemacs-projectile
+- projectile integration with treemacs
+- https://github.com/bbatsov/projectile
+#+begin_src emacs-lisp
+  (use-package treemacs-projectile
+    :straight t
+    :after (treemacs projectile))
+#+end_src
+
 ** workgroups
 - workspace management
 #+begin_src emacs-lisp
