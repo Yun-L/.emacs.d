@@ -37,8 +37,8 @@
 * Preferences
 ** better defaults
 #+begin_src emacs-lisp
-  (global-linum-mode t)
   (global-visual-line-mode 1)
+  (fringe-mode '(2 . 0))
   (setq-default tab-width 4)
   (defalias 'yes-or-no-p 'y-or-n-p)
   (tool-bar-mode 0)
