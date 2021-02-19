@@ -392,6 +392,15 @@
     :bind ("C-x g" . magit-status))
 #+end_src
 
+** treemacs-magit
+- treemacs integration with magit
+- https://github.com/bbatsov/projectile
+#+begin_src emacs-lisp
+  (use-package treemacs-magit
+    :straight t
+    :after (treemacs magit))
+#+end_src
+
 ** flycheck
 - syntax checking
 - https://www.flycheck.org/en/latest/index.html
