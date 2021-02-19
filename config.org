@@ -263,7 +263,7 @@
 #+begin_src emacs-lisp
   (use-package persp-mode-projectile-bridge
     :straight t
-    :after persp-mode
+    :after (persp-mode projectile)
     :config
     (with-eval-after-load "persp-mode-projectile-bridge-autoloads"
       (add-hook 'persp-mode-projectile-bridge-mode-hook
