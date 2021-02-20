@@ -224,23 +224,10 @@
     (persp-keymap-prefix (kbd "C-c w"))
     (persp-autokill-buffer-on-remove 'kill-weak)
 
-    (defvar after-switch-to-buffer-functions nil)
-    (defvar after-display-buffer-functions nil)
-
-    (if (fboundp 'advice-add)
-        ;;Modern way
-        (progn
-          (defun after-switch-to-buffer-adv (&rest r)
-            (apply #'run-hook-with-args 'after-switch-to-buffer-functions r))
-          (defun after-display-buffer-adv (&rest r)
-            (apply #'run-hook-with-args 'after-display-buffer-functions r))
-          (advice-add #'switch-to-buffer :after #'after-switch-to-buffer-adv)
-          (advice-add #'display-buffer   :after #'after-display-buffer-adv)))
-
     (with-eval-after-load "persp-mode"
       (global-set-key (kbd "C-x b") #'persp-switch-to-buffer)
       (global-set-key (kbd "C-x k") #'persp-kill-buffer))
-  
+
     (with-eval-after-load "persp-mode"
       (with-eval-after-load "ivy"
         (add-hook 'ivy-ignore-buffers
