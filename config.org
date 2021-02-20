@@ -438,6 +438,18 @@
     (company-prescient-mode))
 #+end_src
 
+** dumb-jump
+- regex based jump to definition 
+- https://github.com/jacktasia/dumb-jump
+#+begin_src emacs-lisp
+  (use-package dumb-jump
+    :straight t
+    :config
+    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+    :custom
+    (dumb-jump-quiet t))
+#+end_src
+
 ** Python
 *** elpy code folding compatibility
 #+begin_src emacs-lisp
