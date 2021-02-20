@@ -38,7 +38,11 @@
 ** better defaults
 #+begin_src emacs-lisp
   (global-visual-line-mode 1)
-  (fringe-mode '(2 . 0))
+  (fringe-mode nil)
+  (setq window-divider-default-places t)
+  (setq window-divider-default-bottom-width 1)
+  (setq window-divider-default-right-width 1)
+  (window-divider-mode)
   (setq-default tab-width 4)
   (defalias 'yes-or-no-p 'y-or-n-p)
   (tool-bar-mode 0)
@@ -359,17 +363,20 @@
     :init
      (setq moe-theme-mode-line-color 'magenta)
     :config
-    (moe-dark)
+    (defun toggle-moe-dark ()
+      "switch to moe-dark theme"
+      (interactive)
+      (moe-dark)
+      (set-face-attribute 'fringe nil :background "#303030"))
+    (defun toggle-moe-light ()
+      "switch to moe-light theme"
+      (interactive)
+      (moe-light)
+      (set-face-attribute 'fringe nil :background "#fdfde7"))
+    (toggle-moe-dark)
     (powerline-moe-theme)
-    :bind
-    (("C-c t d" . (lambda ()
-                    "switch to moe-dark theme"
-                    (interactive)
-                    (moe-dark)))
-     ("C-c t l" . (lambda ()
-                    "switch to moe-light theme"
-                    (interactive)
-                    (moe-light)))))
+    (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
+    (global-set-key (kbd "C-c t l") 'toggle-moe-light))
 #+end_src
 
 * Programming
