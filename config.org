@@ -51,7 +51,11 @@
   (menu-bar-mode 0)
   (setq inhibit-startup-screen t)
   (setq ring-bell-function 'ignore)
+  (if (member "InputMono" (font-family-list))
+      (set-frame-font "InputMono-12" nil t)
+    nil)
 #+end_src
+
 
 - quick access to configs
 #+begin_src emacs-lisp
