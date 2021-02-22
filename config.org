@@ -350,28 +350,30 @@
 ** moe-theme
 - color theme
 #+begin_src emacs-lisp
-    (use-package moe-theme
-      :straight t
-      :after (powerline)
-      :init
-       (setq moe-theme-mode-line-color 'magenta)
-      :config
-      (defun toggle-moe-dark ()
-        "switch to moe-dark theme"
-        (interactive)
-        (moe-dark)
-        (set-face-attribute 'fringe nil :background "#303030")
-        (set-face-extend 'org-block t nil))
-      (defun toggle-moe-light ()
-        "switch to moe-light theme"
-        (interactive)
-        (moe-light)
-        (set-face-attribute 'fringe nil :background "#fdfde7")
-        (set-face-extend 'org-block t nil))
-      (toggle-moe-dark)
-      (powerline-moe-theme)
-      (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
-      (global-set-key (kbd "C-c t l") 'toggle-moe-light))
+  (use-package moe-theme
+    :straight t
+    :after (powerline)
+    :init
+     (setq moe-theme-mode-line-color 'magenta)
+    :config
+    (defun toggle-moe-dark ()
+      "switch to moe-dark theme"
+      (interactive)
+      (moe-dark)
+      (set-face-attribute 'fringe nil :background "#303030")
+      ;;  (set-face-extend 'org-block t nil)
+      )
+    (defun toggle-moe-light ()
+      "switch to moe-light theme"
+      (interactive)
+      (moe-light)
+      (set-face-attribute 'fringe nil :background "#fdfde7")
+      ;; (set-face-extend 'org-block t nil)
+      )
+    (toggle-moe-dark)
+    (powerline-moe-theme)
+    (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
+    (global-set-key (kbd "C-c t l") 'toggle-moe-light))
 #+end_src
 
 * Programming
