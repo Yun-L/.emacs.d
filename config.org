@@ -38,7 +38,11 @@
 ** better defaults
 #+begin_src emacs-lisp
   (global-visual-line-mode 1)
-  (fringe-mode '(2 . 0))
+  (fringe-mode nil)
+  (setq window-divider-default-places t)
+  (setq window-divider-default-bottom-width 1)
+  (setq window-divider-default-right-width 1)
+  (window-divider-mode)
   (setq-default tab-width 4)
   (defalias 'yes-or-no-p 'y-or-n-p)
   (tool-bar-mode 0)
@@ -47,7 +51,11 @@
   (menu-bar-mode 0)
   (setq inhibit-startup-screen t)
   (setq ring-bell-function 'ignore)
+  (if (member "InputMono" (font-family-list))
+      (set-frame-font "InputMono-12" nil t)
+    nil)
 #+end_src
+
 
 - quick access to configs
 #+begin_src emacs-lisp
@@ -139,14 +147,16 @@
   (use-package god-mode
     :straight t
     :config
-    (global-set-key (kbd "<escape>") #'god-local-mode)
+    (global-set-key (kbd "<escape>") #'god-mode-all)
     (defun my-god-mode-update-cursor ()
       (setq cursor-type (if (or god-local-mode buffer-read-only)
                             'box
                           'bar)))
-
     (add-hook 'god-mode-enabled-hook #'my-god-mode-update-cursor)
-    (add-hook 'god-mode-disabled-hook #'my-god-mode-update-cursor))
+    (add-hook 'god-mode-disabled-hook #'my-god-mode-update-cursor)
+    :custom
+    (god-exempt-major-modes nil)
+    (god-exempt-predicates nil))
 #+end_src
 
 ** treemacs
@@ -220,23 +230,10 @@
     (persp-keymap-prefix (kbd "C-c w"))
     (persp-autokill-buffer-on-remove 'kill-weak)
 
-    (defvar after-switch-to-buffer-functions nil)
-    (defvar after-display-buffer-functions nil)
-
-    (if (fboundp 'advice-add)
-        ;;Modern way
-        (progn
-          (defun after-switch-to-buffer-adv (&rest r)
-            (apply #'run-hook-with-args 'after-switch-to-buffer-functions r))
-          (defun after-display-buffer-adv (&rest r)
-            (apply #'run-hook-with-args 'after-display-buffer-functions r))
-          (advice-add #'switch-to-buffer :after #'after-switch-to-buffer-adv)
-          (advice-add #'display-buffer   :after #'after-display-buffer-adv)))
-
     (with-eval-after-load "persp-mode"
       (global-set-key (kbd "C-x b") #'persp-switch-to-buffer)
       (global-set-key (kbd "C-x k") #'persp-kill-buffer))
-  
+
     (with-eval-after-load "persp-mode"
       (with-eval-after-load "ivy"
         (add-hook 'ivy-ignore-buffers
@@ -353,23 +350,28 @@
 ** moe-theme
 - color theme
 #+begin_src emacs-lisp
-  (use-package moe-theme
-    :straight t
-    :after (powerline)
-    :init
-     (setq moe-theme-mode-line-color 'magenta)
-    :config
-    (moe-dark)
-    (powerline-moe-theme)
-    :bind
-    (("C-c t d" . (lambda ()
-                    "switch to moe-dark theme"
-                    (interactive)
-                    (moe-dark)))
-     ("C-c t l" . (lambda ()
-                    "switch to moe-light theme"
-                    (interactive)
-                    (moe-light)))))
+    (use-package moe-theme
+      :straight t
+      :after (powerline)
+      :init
+       (setq moe-theme-mode-line-color 'magenta)
+      :config
+      (defun toggle-moe-dark ()
+        "switch to moe-dark theme"
+        (interactive)
+        (moe-dark)
+        (set-face-attribute 'fringe nil :background "#303030")
+        (set-face-extend 'org-block t nil))
+      (defun toggle-moe-light ()
+        "switch to moe-light theme"
+        (interactive)
+        (moe-light)
+        (set-face-attribute 'fringe nil :background "#fdfde7")
+        (set-face-extend 'org-block t nil))
+      (toggle-moe-dark)
+      (powerline-moe-theme)
+      (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
+      (global-set-key (kbd "C-c t l") 'toggle-moe-light))
 #+end_src
 
 * Programming
@@ -427,6 +429,18 @@
     :after (company prescient)
     :config
     (company-prescient-mode))
+#+end_src
+
+** dumb-jump
+- regex based jump to definition 
+- https://github.com/jacktasia/dumb-jump
+#+begin_src emacs-lisp
+  (use-package dumb-jump
+    :straight t
+    :config
+    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+    :custom
+    (dumb-jump-quiet t))
 #+end_src
 
 ** Python
