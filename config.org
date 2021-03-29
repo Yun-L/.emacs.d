@@ -54,8 +54,10 @@
   (if (member "InputMono" (font-family-list))
       (set-frame-font "InputMono-12" nil t)
     nil)
+  (global-unset-key (kbd "C-z"))
+  (global-unset-key (kbd "C-x C-z"))
+  (setq indent-tabs-mode nil)
 #+end_src
-
 
 - quick access to configs
 #+begin_src emacs-lisp
