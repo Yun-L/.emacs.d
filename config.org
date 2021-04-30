@@ -3,10 +3,13 @@
 #+LANGUAGE: en
 
 * Setup
-** straight.el
-- package management bootstrap code (must be before other packages)
-- requires git
-- https://github.com/raxod502/straight.el
+** Package Manager
+:PROPERTIES:
+:Name:     straight.el
+:Prerequisites: git
+:Source:   https://github.com/raxod502/straight.el
+:END:
+- package management bootstrap code (must be before any other packages are loaded)
 #+begin_src emacs-lisp
   (defvar bootstrap-version)
   (let ((bootstrap-file
@@ -22,9 +25,13 @@
     (load bootstrap-file nil 'nomessage))
 #+end_src
 
-** use-package
-- must be installed right after straight.el
-- config management
+** Configuration Manager
+:PROPERTIES:
+:Name:     use-package
+:Source:   https://github.com/jwiegley/use-package
+:END:
+- isolate configurations per package
+- can interface with straight.el but must be installed right after straight.el
 #+begin_src emacs-lisp
   (straight-use-package 'use-package)
 #+end_src
