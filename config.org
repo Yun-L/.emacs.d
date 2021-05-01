@@ -41,30 +41,44 @@
   (setq use-package-compute-statistics t)
 #+end_src
 
-* Preferences
-** better defaults
+* Default Preferences
+** Visual Defaults
+- wrap text when lines are too long
 #+begin_src emacs-lisp
   (global-visual-line-mode 1)
+#+end_src
+- display default emacs fringes (8 pixels on the left and right of buffers)
+#+begin_src emacs-lisp
   (fringe-mode nil)
+#+end_src
+- use window dividers
+#+begin_src emacs-lisp
   (setq window-divider-default-places t)
   (setq window-divider-default-bottom-width 1)
   (setq window-divider-default-right-width 1)
   (window-divider-mode)
-  (setq-default tab-width 4)
-  (defalias 'yes-or-no-p 'y-or-n-p)
-  (tool-bar-mode 0)
-  (scroll-bar-mode 0)
-  (tooltip-mode 0)
+#+end_src
+- hide menu bar, scroll bar, tool bar, and tooltip
+#+begin_src emacs-lisp
   (menu-bar-mode 0)
-  (setq inhibit-startup-screen t)
-  (setq ring-bell-function 'ignore)
+  (scroll-bar-mode 0)
+  (tool-bar-mode 0)
+  (tooltip-mode 0)
+#+end_src
+*** Fonts
+:PROPERTIES:
+:Source:   https://input.djr.com/info/
+:Name:     Input
+:END:
+- 'InputMono' for default font (if found)
+#+begin_src emacs-lisp
   (if (member "InputMono" (font-family-list))
       (set-frame-font "InputMono-12" nil t)
     nil)
 #+end_src
 
-
-- quick access to configs
+** Interface Defaults
+- custom keybinding to quickly access configs
 #+begin_src emacs-lisp
   (defun find-user-config-file ()
     (interactive)
@@ -74,9 +88,21 @@
 
   (global-set-key (kbd "C-~") 'find-user-config-file)
 #+end_src
+- change all 'yes' or 'no' prompts to take 'y' or 'n' as input
+#+begin_src emacs-lisp
+  (defalias 'yes-or-no-p 'y-or-n-p)
+#+end_src
+- disable sounds
+#+begin_src emacs-lisp
+  (setq ring-bell-function 'ignore)
+#+end_src
+- disable default splash screen
+#+begin_src emacs-lisp
+  (setq inhibit-startup-screen t)
+#+end_src
 
-** file backups/autosave
-- creates the following directories and saves backups/autosaves to them:
+*** file backups/autosave
+- creates the following directories if they don't already exist and stores backups/autosaves in them:
   - .emacs.d/backup/
   - .emacs.d/autosave/
 #+begin_src emacs-lisp
@@ -93,11 +119,54 @@
   (setq auto-save-file-name-transforms `((".*" ,autosave-dir t)))
 #+end_src
 
+* Appearance
+** Enhance Status Bar
+:PROPERTIES:
+:Name:     powerline
+:Source:   https://github.com/milkypostman/powerline
+:END:
+#+begin_src emacs-lisp
+  (use-package powerline
+    :straight t)
+#+end_src
+
+** Theme
+:PROPERTIES:
+:Name:     moe-theme
+:Source:   https://github.com/kuanyui/moe-theme.el
+:END:
+#+begin_src emacs-lisp
+    (use-package moe-theme
+      :straight t
+      :after (powerline)
+      :init
+       (setq moe-theme-mode-line-color 'magenta)
+      :config
+      (defun toggle-moe-dark ()
+        "switch to moe-dark theme"
+        (interactive)
+        (moe-dark)
+        (set-face-attribute 'fringe nil :background "#303030")
+        (set-face-extend 'org-block t nil))
+      (defun toggle-moe-light ()
+        "switch to moe-light theme"
+        (interactive)
+        (moe-light)
+        (set-face-attribute 'fringe nil :background "#fdfde7")
+        (set-face-extend 'org-block t nil))
+      (toggle-moe-dark)
+      (powerline-moe-theme)
+      (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
+      (global-set-key (kbd "C-c t l") 'toggle-moe-light))
+#+end_src
+
 * Interface
-** undo-tree
-- represent edit history as a tree
-- https://www.emacswiki.org/emacs/UndoTree
-- docs: https://www.dr-qubit.org/undo-tree/undo-tree.txt
+** Branching Undo History
+:PROPERTIES:
+:Name:     undo-tree
+:Source:   https://www.dr-qubit.org/undo-tree.html
+:END:
+- represent edit history as a tree, rather than a linear sequence of changes
 #+begin_src emacs-lisp
   (use-package undo-tree
     :straight t
@@ -105,9 +174,13 @@
     (global-undo-tree-mode))
 #+end_src
 
-** which-key
-- dispay keybindings after some time
-- https://github.com/justbur/emacs-which-key
+** Key Binding Guidance
+:PROPERTIES:
+:Name:     which-key
+:Source:   https://github.com/justbur/emacs-which-key
+:END:
+- minor mode that display key bindings following an incomplete command
+- popup serves as a reminder for forgotten key bindings or as a source of key binding discovery
 #+begin_src emacs-lisp
   (use-package which-key
     :straight t
@@ -115,46 +188,62 @@
     (which-key-mode))
 #+end_src
 
-** transpose-frame
-- transpose window arrangement
-- https://github.com/emacsmirror/emacswiki.org/blob/master/transpose-frame.el
-#+begin_src emacs-lisp
-  (use-package transpose-frame
-    :straight t)
-#+end_src
-
-** ace-window
-- better window switching
-- https://github.com/abo-abo/ace-window
+** Easier Window Switching
+:PROPERTIES:
+:Name:     ace-window
+:Source:   https://github.com/abo-abo/ace-window
+:END:
+- assign keys to each open window for selection
 #+begin_src emacs-lisp
   (use-package ace-window
     :straight t
     :bind ("M-o" . ace-window)
     :custom
+    ;; keep same behavior even with only 2 windows open
     (aw-dispatch-always 1))
 #+end_src
 
-** sr-speedbar
-- speedbar in the same frame
-- https://www.emacswiki.org/emacs/SrSpeedbar
-- https://www.gnu.org/software/emacs/manual/html_node/speedbar/
+** Transpose Window Layout
+:PROPERTIES:
+:Name:     transpose-frame
+:Source:   https://github.com/emacsmirror/emacswiki.org/blob/master/transpose-frame.el
+:END:
+- command `transpose-frame` for transposing window arrangement
+- be careful not to leave treemacs sidebar open when transposing
+#+begin_src emacs-lisp
+  (use-package transpose-frame
+    :straight t)
+#+end_src
+
+** Speedbar In The Same Frame
+:PROPERTIES:
+:Name:     sr-speedbar
+:Source:   https://www.emacswiki.org/emacs/SrSpeedbar
+:END:
+- allow opening of the builtin speedbar to be in the same emacs frame
+- speedbar docs: https://www.gnu.org/software/emacs/manual/html_node/speedbar/
 #+begin_src emacs-lisp
   (use-package sr-speedbar
     :straight t
     :bind ([f8] . sr-speedbar-toggle)
     :custom
     (speedbar-use-images nil "disable icons")
+    ;; show hidden filenames
     (speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'"))
 #+end_src
 
-** god-mode
-- enter commands without modifier keys
-- https://github.com/emacsorphanage/god-mode
+** Modal Editing
+:PROPERTIES:
+:Name:     god-mode
+:Source:   https://github.com/emacsorphanage/god-mode
+:END:
+- enter key chords without pressing the modifier keys
 #+begin_src emacs-lisp
   (use-package god-mode
     :straight t
     :config
     (global-set-key (kbd "<escape>") #'god-mode-all)
+    ;; change cursor shape when entering/leaving god mode
     (defun my-god-mode-update-cursor ()
       (setq cursor-type (if (or god-local-mode buffer-read-only)
                             'box
@@ -166,14 +255,19 @@
     (god-exempt-predicates nil))
 #+end_src
 
-** treemacs
+** Project File Explorer
+:PROPERTIES:
+:Name:     treemacs
+:Source:   https://github.com/Alexander-Miller/treemacs
+:END:
 - tree layout file explorer
-- https://github.com/Alexander-Miller/treemacs
 #+begin_src emacs-lisp
   (use-package treemacs
     :straight t
     :config
+    ;; highlight file of current buffer
     (treemacs-follow-mode t)
+    ;; automatically refresh when there are relevant changes made in the file system
     (treemacs-filewatch-mode t)
     (pcase (cons (not (null (executable-find "git")))
                  (not (null treemacs-python-executable)))
@@ -189,10 +283,19 @@
           ("C-x t C-t" . treemacs-find-file)
           ("C-x t M-t" . treemacs-find-tag)))
 #+end_src
+- treemacs integration with magit
+#+begin_src emacs-lisp
+  (use-package treemacs-magit
+    :straight t
+    :after (treemacs magit))
+#+end_src
 
-** projectile
-- project management
-- https://github.com/bbatsov/projectile
+** Project Management
+:PROPERTIES:
+:Name:     projectile
+:Source:   https://github.com/bbatsov/projectile
+:END:
+- project management utilities (jumping between files, grep in project, etc)
 #+begin_src emacs-lisp
   (use-package projectile
     :straight t
@@ -202,32 +305,19 @@
     :custom
     (projectile-completion-system 'ivy "use ivy for projectile completion backend"))
 #+end_src
-
-** treemacs-projectile
 - projectile integration with treemacs
-- https://github.com/bbatsov/projectile
 #+begin_src emacs-lisp
   (use-package treemacs-projectile
     :straight t
     :after (treemacs projectile))
 #+end_src
 
-** workgroups
-- workspace management
-#+begin_src emacs-lisp
-  (use-package workgroups
-    :disabled
-    :straight t
-    :config
-    (workgroups-mode t)
-    :custom
-    (wg-prefix-key (kbd "C-c w")))
-#+end_src
-
-** persp-mode
+** Workspace Management
+:PROPERTIES:
+:Name:     persp-mode
+:Source:   https://github.com/Bad-ptr/persp-mode.el
+:END:
 - workspace management (shared among frames)
-- manually start functionality with persp-mode
-- https://github.com/Bad-ptr/persp-mode.el
 #+begin_src emacs-lisp
   (use-package persp-mode
     :straight t
@@ -260,10 +350,7 @@
                         (persp-window-switch . nil)
                         (persp-frame-switch  . nil)))))))
 #+end_src
-
-** persp-mode-projectile-bridge
 - projectile integration with persp-mode
-- https://github.com/Bad-ptr/persp-mode-projectile-bridge.el
 #+begin_src emacs-lisp
   (use-package persp-mode-projectile-bridge
     :straight t
@@ -281,28 +368,12 @@
                 t)))
 #+end_src
 
-** prescient
-- sort and filter lists of candidates (for ivy/company listing)
-- https://github.com/raxod502/prescient.el
-#+begin_src emacs-lisp
-  (use-package prescient
-    :straight t)
-#+end_src
-
-** ivy-prescient
-- prescient integration with ivy
-- https://github.com/raxod502/prescient.el
-#+begin_src emacs-lisp
-  (use-package ivy-prescient
-    :straight t
-    :after (prescient ivy counsel)
-    :config
-    (ivy-prescient-mode))
-#+end_src
-** ivy
-- completion framework
-- replaces built in ido functionality
-- https://github.com/abo-abo/swiper
+** Ido Completion Replacement
+:PROPERTIES:
+:Name:     ivy
+:Source:   https://github.com/abo-abo/swiper
+:END:
+- completion framework to replace built in ido functionality
 #+begin_src emacs-lisp
   (use-package ivy
     :straight t
@@ -314,18 +385,26 @@
     (ivy-count-format "[%d/%d] "))
 #+end_src
 
-** counsel
+*** use ivy as backend for built in emacs commands
+:PROPERTIES:
+:Name:     counsel
+:Source:   https://github.com/abo-abo/swiper
+:Prerequisites: ivy
+:END:
 - provides versions of common emacs commands that use ivy
-- https://github.com/abo-abo/swiper
 #+begin_src emacs-lisp
   (use-package counsel
     :straight t
     :after (ivy))
 #+end_src
 
-** swiper
-- ivy enhance version of isearch
-- https://github.com/abo-abo/swiper
+*** isearch enhancement
+:PROPERTIES:
+:Name:     swiper
+:Source:   https://github.com/abo-abo/swiper
+:Prerequisites: ivy
+:END:
+- ivy enhanced version of isearch
 #+begin_src emacs-lisp
   (use-package swiper
     :straight t
@@ -333,9 +412,39 @@
     :bind (("C-s" . swiper-isearch)))
 #+end_src
 
-** avy
+** Interactive List Sorting
+:PROPERTIES:
+:Name:     prescient
+:Source:   https://github.com/raxod502/prescient.el
+:END:
+- sort and filter lists of candidates (for ivy/company listing)
+#+begin_src emacs-lisp
+  (use-package prescient
+    :straight t)
+#+end_src
+- prescient integration with ivy
+#+begin_src emacs-lisp
+  (use-package ivy-prescient
+    :straight t
+    :after (prescient ivy counsel)
+    :config
+    (ivy-prescient-mode))
+#+end_src
+- prescient integration with company
+#+begin_src emacs-lisp
+  (use-package company-prescient
+    :straight t
+    :after (company prescient)
+    :config
+    (company-prescient-mode))
+#+end_src
+
+** Enhance Text Navigation
+:PROPERTIES:
+:Name:     avy
+:Source:   https://github.com/abo-abo/avy
+:END:
 - jumping to visible text w/ char-based decision tree
-- https://github.com/abo-abo/avy
 #+begin_src emacs-lisp
   (use-package avy
     :straight t
@@ -346,80 +455,9 @@
     (avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s) "change to dvorak home row keys"))
 #+end_src
 
-* Appearance
-** powerline
-- better status bar
-#+begin_src emacs-lisp
-  (use-package powerline
-    :straight t)
-#+end_src
-
-** moe-theme
-- color theme
-#+begin_src emacs-lisp
-    (use-package moe-theme
-      :straight t
-      :after (powerline)
-      :init
-       (setq moe-theme-mode-line-color 'magenta)
-      :config
-      (defun toggle-moe-dark ()
-        "switch to moe-dark theme"
-        (interactive)
-        (moe-dark)
-        (set-face-attribute 'fringe nil :background "#303030")
-        (set-face-extend 'org-block t nil))
-      (defun toggle-moe-light ()
-        "switch to moe-light theme"
-        (interactive)
-        (moe-light)
-        (set-face-attribute 'fringe nil :background "#fdfde7")
-        (set-face-extend 'org-block t nil))
-      (toggle-moe-dark)
-      (powerline-moe-theme)
-      (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
-      (global-set-key (kbd "C-c t l") 'toggle-moe-light))
-#+end_src
-
-* Programming
-** YASnippet
-- template system
-- https://github.com/joaotavora/yasnippet
-#+begin_src emacs-lisp
-  (use-package yasnippet
-    :straight t
-    :config
-    (yas-global-mode 1))
-#+end_src
-
-** magit 
-- git interface
-- https://magit.vc/
-#+begin_src emacs-lisp
-  (use-package magit
-    :straight t
-    :bind ("C-x g" . magit-status))
-#+end_src
-
-** treemacs-magit
-- treemacs integration with magit
-- https://github.com/bbatsov/projectile
-#+begin_src emacs-lisp
-  (use-package treemacs-magit
-    :straight t
-    :after (treemacs magit))
-#+end_src
-
-** flycheck
-- syntax checking
-- https://www.flycheck.org/en/latest/index.html
-#+begin_src emacs-lisp
-  (use-package flycheck
-    :straight t)
-#+end_src
-
-** company
-- inbuffer auto complete
+** Auto Completion
+- inbuffer completion framework
+- uses pluggable back-ends/front-ends to retrieve and display completion candidates
 #+begin_src emacs-lisp
   (use-package company
     :straight t
@@ -427,20 +465,58 @@
     (global-company-mode))
 #+end_src
 
-** company-prescient
-- prescient integration with company
-- https://github.com/raxod502/prescient.el
+* Programming
+** Programming Defaults
+  #+begin_src emacs-lisp
+    (setq-default tab-width 4)
+  #+end_src
+
+** Code Templating System
+:PROPERTIES:
+:Source:   https://github.com/joaotavora/yasnippet
+:Name:     yasnippet
+:END:
+- template system
 #+begin_src emacs-lisp
-  (use-package company-prescient
+  (use-package yasnippet
     :straight t
-    :after (company prescient)
     :config
-    (company-prescient-mode))
+    (yas-global-mode 1))
+#+end_src
+- premade snippets
+#+begin_src emacs-lisp
+  (use-package yasnippet-snippets
+    :straight t)
 #+end_src
 
-** dumb-jump
-- regex based jump to definition 
-- https://github.com/jacktasia/dumb-jump
+** Git Interface
+:PROPERTIES:
+:Name:     magit
+:Source:   https://magit.vc/
+:END:
+- interface for common git features
+#+begin_src emacs-lisp
+  (use-package magit
+    :straight t
+    :bind ("C-x g" . magit-status))
+#+end_src
+
+** Syntax Checking
+:PROPERTIES:
+:Name:     flycheck
+:Source:   https://www.flycheck.org/en/latest/index.html
+:END:
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :straight t)
+#+end_src
+
+** Fallback For Jumping To Definitions
+:PROPERTIES:
+:Name:     dumb-jump
+:Source:   https://github.com/jacktasia/dumb-jump
+:END:
+- regex based jump to definition
 #+begin_src emacs-lisp
   (use-package dumb-jump
     :straight t
@@ -451,19 +527,17 @@
 #+end_src
 
 ** Python
-*** elpy code folding compatibility
-#+begin_src emacs-lisp
-  (add-hook 'python-mode-hook 'hs-minor-mode)
-#+end_src
-
-*** elpy
+:PROPERTIES:
+:Source:   https://elpy.readthedocs.io/en/latest
+:Name:     elpy
+:END:
 - python development environment
 - uses flycheck for syntax checking backend
-- external dependencies can be installed with elpy-config
-- https://elpy.readthedocs.io/en/latest
+- external dependencies can be installed with `elpy-config`
 #+begin_src emacs-lisp
   (use-package elpy
     :straight t
+    :after (company flycheck)
     :defer t
     :init
     (advice-add 'python-mode :before 'elpy-enable) ;; defer loading
@@ -483,12 +557,18 @@
        elpy-module-yasnippet
        elpy-module-django
        elpy-module-sane-defaults) "activate elpy modules")
+    ;; code folding compatibility
+    (add-hook 'python-mode-hook 'hs-minor-mode)
     :custom-face
+    ;; code folding button styling
     (elpy-folding-fringe-face ((t (:inherit (quote font-lock-keyword-face) :box (:line-width 1 :style released-button))))))
 #+end_src
 
 ** LaTeX
-*** AUCTeX
+:PROPERTIES:
+:Name:     auctex
+:Source:   https://www.gnu.org/software/auctex/
+:END:
 - support for TeX and TeX macro packages
 #+begin_src emacs-lisp
   (use-package tex ;;workaround because auctex is old
@@ -509,6 +589,7 @@
 #+begin_src emacs-lisp
   (use-package rtags
     :straight t
+    :if (memq system-type '(gnu/linux))
     :config
     (rtags-enable-standard-keybindings)
     (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
@@ -562,7 +643,7 @@
 #+end_src
 
 * Org Mode
-** defaults
+** Org Mode Defaults
 - indent org files 
 #+begin_src emacs-lisp
   (setq org-startup-indented t)
@@ -640,4 +721,3 @@
                      (org-agenda-files '("~/Dropbox/gtd/projects.org")))))
              nil))))
 #+end_src
-
