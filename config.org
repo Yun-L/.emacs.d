@@ -482,6 +482,46 @@
   (setq-default indent-tabs-mode nil)
 #+end_src
 
+** Language Server Protocol Support
+:PROPERTIES:
+:Source:   https://emacs-lsp.github.io/lsp-ui/
+:Name:     lsp-mode
+:END:
+- client for the Language Server Protocol
+- install language servers to get support for particular languages
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :straight t
+    :init
+    (setq lsp-keymap-prefix "C-c l")
+    :after (which-key)
+    :hook ((java-mode . lsp-deferred)
+           ;; which-key integration
+           (lsp-mode . lsp-enable-which-key-integration))
+    :commands (lsp lsp-deferred))
+#+end_src
+- UI modules for lsp-mode
+#+begin_src emacs-lisp
+  (use-package lsp-ui
+    :straight t
+    :after (lsp-mode)
+    :commands lsp-ui-mode)
+#+end_src
+- integration with ivy
+#+begin_src emacs-lisp
+  (use-package lsp-ivy
+    :straight t
+    :after (ivy)
+    :commands lsp-ivy-workspace-symbol)
+#+end_src
+- integration with treemacs
+#+begin_src emacs-lisp
+  (use-package lsp-treemacs
+    :straight t
+    :after (treemacs)
+    :commands lsp-treemacs-errors-list)
+#+end_src
+
 ** Code Templating System
 :PROPERTIES:
 :Source:   https://github.com/joaotavora/yasnippet
