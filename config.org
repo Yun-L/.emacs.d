@@ -575,8 +575,43 @@
 #+end_src
 
 ** Javascript
+*** JS Defaults
 #+begin_src emacs-lisp
   (setq-default js-indent-level 4)
+  (setq-default js-switch-indent-offset 4)
+#+end_src
+
+*** Development Environment
+:PROPERTIES:
+:Name:     js2-mode
+:Source:   https://github.com/mooz/js2-mode
+:END:
+- major mode for javascript
+#+begin_src emacs-lisp
+  (use-package js2-mode
+    :straight t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+    (add-hook 'js2-mode-hook #'js2-imenu-extras-mode))
+#+end_src
+
+** Web Templates
+:PROPERTIES:
+:Name:     web-mode
+:Source:   https://web-mode.org
+:END:
+- major mode for editing web templates
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :straight t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
+    :custom
+    (web-mode-markup-indent-offset 2)
+    (web-mode-css-indent-offset 2)
+    (web-mode-code-indent-offset 2)
+    (web-mode-enable-current-column-highlight t)
+    (web-mode-enable-current-element-highlight t))
 #+end_src
 
 ** LaTeX
