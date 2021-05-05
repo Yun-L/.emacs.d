@@ -763,17 +763,6 @@
 #+begin_src emacs-lisp
   (setq org-hide-emphasis-markers t)
 #+end_src
-
-** Nicer Looking Bullets
-:PROPERTIES:
-:Name:     org-bullets
-:Source:   https://github.com/sabof/org-bullets
-:END:
-#+begin_src emacs-lisp
-  (use-package org-bullets
-    :straight t
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 #+end_src
 
 ** GTD
