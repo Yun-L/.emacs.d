@@ -635,9 +635,7 @@
     :config
     (add-hook 'java-mode-hook 'lsp)
     (setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
-                                                   :path "C:/Program Files/AdoptOpenJDK/jdk-8.0.265.01-hotspot/")
-                                            (:name "JavaSE-16"
-                                                   :path "C:/Program Files/Java/jdk-16.0.1/"
+                                                   :path "C:/Program Files/AdoptOpenJDK/jdk-8.0.265.01-hotspot/"
                                                    :default t)])
     :custom
     (lsp-java-server-install-dir "~/.emacs.d/lsp-java-server/"))
