@@ -525,6 +525,14 @@
     :commands lsp-treemacs-errors-list)
 #+end_src
 
+** Debug Adapter Protocol Support
+#+begin_src emacs-lisp
+  (use-package dap-mode
+    :straight t
+    :after lsp-mode
+    :config (dap-auto-configure-mode))
+#+end_src
+
 ** Code Templating System
 :PROPERTIES:
 :Source:   https://github.com/joaotavora/yasnippet
