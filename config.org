@@ -529,6 +529,10 @@
 #+end_src
 
 ** Debug Adapter Protocol Support
+:PROPERTIES:
+:Name:     dap-mode
+:Source:   https://github.com/emacs-lsp/dap-mode
+:END:
 #+begin_src emacs-lisp
   (use-package dap-mode
     :straight t
