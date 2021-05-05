@@ -75,6 +75,11 @@
   (if (member "InputMono" (font-family-list))
       (set-frame-font "InputMono-12" nil t)
     nil)
+
+  (custom-theme-set-faces
+   'user
+   '(variable-pitch ((t (:family "InputSerif"))))
+   '(fixed-pitch ((t ( :family "InputMono")))))
 #+end_src
 
 ** Interface Defaults
