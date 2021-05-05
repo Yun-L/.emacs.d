@@ -501,7 +501,10 @@
     :hook ((java-mode . lsp-deferred)
            ;; which-key integration
            (lsp-mode . lsp-enable-which-key-integration))
-    :commands (lsp lsp-deferred))
+    :commands (lsp lsp-deferred)
+    :custom
+    (gc-cons-threshold 100000000)
+    (read-process-output-max (* 1024 1024)))
 #+end_src
 - UI modules for lsp-mode
 #+begin_src emacs-lisp
@@ -623,6 +626,24 @@
     :custom-face
     ;; code folding button styling
     (elpy-folding-fringe-face ((t (:inherit (quote font-lock-keyword-face) :box (:line-width 1 :style released-button))))))
+#+end_src
+
+** Java
+#+begin_src emacs-lisp
+  (use-package lsp-java
+    :straight t
+    :config
+    (add-hook 'java-mode-hook 'lsp)
+    (setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
+                                                   :path "C:/Program Files/AdoptOpenJDK/jdk-8.0.265.01-hotspot/")
+                                            (:name "JavaSE-16"
+                                                   :path "C:/Program Files/Java/jdk-16.0.1/"
+                                                   :default t)])
+    :custom
+    (lsp-java-server-install-dir "~/.emacs.d/lsp-java-server/"))
+
+  (use-package dap-java
+    :ensure nil)
 #+end_src
 
 ** Javascript
