@@ -484,6 +484,13 @@
 #+begin_src emacs-lisp
   (setq-default indent-tabs-mode nil)
 #+end_src
+- show column indicator, default to 80 columns
+- override if a different value is needed in a specific language
+#+begin_src emacs-lisp
+  (unless (version< emacs-version "27.1")
+    (setq-default display-fill-column-indicator-column 80)
+    (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode))
+#+end_src
 
 ** Language Server Protocol Support
 :PROPERTIES:
