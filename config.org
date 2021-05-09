@@ -654,6 +654,14 @@
   (use-package dap-java
     :ensure nil)
 #+end_src
+- set column indicator at 100
+#+begin_src emacs-lisp
+  (unless (version< emacs-version "27.1")
+    (add-hook 'java-mode-hook
+              (lambda ()
+                (make-local-variable 'display-fill-column-indicator-column)
+                (setq display-fill-column-indicator-column 100))))
+#+end_src
 
 ** Javascript
 *** JS Defaults
