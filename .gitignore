@@ -5,3 +5,5 @@
 !init.el
 !config.org
 !README.md
+!misc/
+!misc/*
