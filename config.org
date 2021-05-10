@@ -640,21 +640,7 @@
 #+end_src
 
 ** Java
-#+begin_src emacs-lisp
-  (use-package lsp-java
-    :straight t
-    :config
-    (add-hook 'java-mode-hook 'lsp)
-    (setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
-                                                   :path "C:/Program Files/AdoptOpenJDK/jdk-8.0.265.01-hotspot/"
-                                                   :default t)])
-    :custom
-    (lsp-java-server-install-dir "~/.emacs.d/lsp-java-server/")
-    (lsp-java-format-settings-url "~/.emacs.d/misc/eclipse-java-google-style.xml"))
-
-  (use-package dap-java
-    :ensure nil)
-#+end_src
+*** Java Defaults
 - set column indicator at 100
 #+begin_src emacs-lisp
   (unless (version< emacs-version "27.1")
@@ -671,6 +657,41 @@
               (c-set-offset 'arglist-close 0)))
 
 #+end_src
+
+*** Java LSP Server
+:PROPERTIES:
+:Source:   https://github.com/emacs-lsp/lsp-java
+:Name:     lsp-java
+:Prerequisites: lsp-mode
+:END:
+#+begin_src emacs-lisp
+  (use-package lsp-java
+    :straight t
+    :after (lsp-mode)
+    :config
+    (add-hook 'java-mode-hook 'lsp)
+    (setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
+                                                   :path "C:/Program Files/AdoptOpenJDK/jdk-8.0.265.01-hotspot/"
+                                                   :default t)])
+    :custom
+    (lsp-java-server-install-dir "~/.emacs.d/lsp-java-server/")
+    (lsp-java-format-settings-url "~/.emacs.d/misc/eclipse-java-google-style.xml"))
+
+  (use-package dap-java
+    :ensure nil)
+#+end_src
+
+** Groovy
+*** Groovy Major Mode
+:PROPERTIES:
+:Name:     groovy-mode
+:Source:   https://github.com/Groovy-Emacs-Modes/groovy-emacs-modes
+:END:
+#+begin_src emacs-lisp
+  (use-package groovy-mode
+    :straight t)
+#+end_src
+
 ** Javascript
 *** JS Defaults
 #+begin_src emacs-lisp
