@@ -41,6 +41,12 @@
   (setq use-package-compute-statistics t)
 #+end_src
 
+** General Early Setup
+- org needs to be loaded throught straight, before any packages that use org are loaded. This is to fix a bug with org agenda commands: ~Symbol's value as variable is void: org-priority-highest~
+#+begin_src emacs-lisp
+  (straight-use-package '(org :local-repo nil))
+#+end_src
+
 * Default Preferences
 ** Visual Defaults
 - wrap text when lines are too long
