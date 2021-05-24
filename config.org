@@ -747,6 +747,15 @@
 #+end_src
 
 ** C++
+
+*** C++ Defaults
+- offsets
+#+begin_src emacs-lisp
+  (add-hook 'c++-mode-hook
+            (lambda ()
+              (c-set-offset 'case-label '+)))
+#+end_src
+
 *** rtags
 - code tagging, source code navigation
 - http://www.rtags.net
