@@ -1,0 +1,6 @@
+-*
+!config.*
+!custom
+!.gitignore
+!init.el
+!README.md
