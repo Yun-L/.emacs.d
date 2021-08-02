@@ -842,6 +842,16 @@
     (markdown-header-scaling t))
 #+end_src
 
+** Docker Compose
+:PROPERTIES:
+:Name:     docker-compose-mode
+:Source:   https://github.com/meqif/docker-compose-mode
+:END:
+- docker compose major mode
+#+BEGIN_SRC emacs-lisp
+  (use-package docker-compose-mode
+    :straight t)
+#+END_SRC
 * Org Mode
 ** Org Mode Defaults
 - indent org files
