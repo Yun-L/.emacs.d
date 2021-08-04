@@ -71,6 +71,10 @@
   (tool-bar-mode 0)
   (tooltip-mode 0)
 #+end_src
+- use pixel size for frame resizes rather than font
+#+begin_src emacs-lisp
+  (setq frame-resize-pixelwise t)
+#+end_src
 *** Fonts
 :PROPERTIES:
 :Source:   https://input.djr.com/info/
