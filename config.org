@@ -825,6 +825,19 @@
     (rtags-display-result-backend 'ivy))
 #+end_src
 
+** Lua
+*** Lua
+:PROPERTIES:
+:Name:     lua-mode
+:Source:   https://github.com/immerrr/lua-mode
+:END:
+- lua major mode
+#+begin_src emacs-lisp
+  (use-package lua-mode
+    :straight t
+    :custom
+    (lua-indent-level 4))
+#+end_src
 ** Markdown
 :PROPERTIES:
 :Name:     markdown-mode
