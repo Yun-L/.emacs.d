@@ -3,6 +3,8 @@
 #### Dependencies
 
 * git
+* [Input fonts](https://input.djr.com) (Input mono, sans, serif)
+
 
 #### How it works
 
