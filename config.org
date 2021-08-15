@@ -649,6 +649,22 @@
     (elpy-folding-fringe-face ((t (:inherit (quote font-lock-keyword-face) :box (:line-width 1 :style released-button))))))
 #+end_src
 
+** C#
+*** C# Major Mode
+#+begin_src emacs-lisp
+  (use-package tree-sitter
+    :disabled
+    :straight t)
+  (use-package tree-sitter-langs
+    :disabled
+    :straight t)
+
+  (use-package csharp-mode
+    :straight t)
+    ;; :config
+    ;; (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
+#+end_src
+
 ** Java
 *** Java Defaults
 - set column indicator at 100
