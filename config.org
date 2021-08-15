@@ -956,8 +956,7 @@
 
     (setq org-agenda-files '("~/Dropbox/gtd/inbox.org"
                              "~/Dropbox/gtd/projects.org"
-                             "~/Dropbox/gtd/reminders.org"
-                             "~/Dropbox/gtd/calendar.org"))
+                             "~/Dropbox/gtd/reminders.org"))
     (setq org-capture-templates '(("t" "Todo [inbox]" entry
                                    (file+headline "~/Dropbox/gtd/inbox.org" "Tasks")
                                    "* TODO %i%?")
