@@ -149,6 +149,14 @@
   (use-package smart-mode-line
     :straight t)
 #+end_src
+
+** Minimize Modeline Clutter
+- Really make sure this is installed because a bunch of other packages diminish their modes
+#+begin_src emacs-lisp
+  (use-package diminish
+    :config
+    (diminish 'visual-line-mode)
+    (diminish 'org-indent-mode)
     :straight t)
 #+end_src
 
@@ -192,6 +200,7 @@
 #+begin_src emacs-lisp
   (use-package undo-tree
     :straight t
+    :diminish undo-tree-mode
     :config
     (global-undo-tree-mode))
 #+end_src
@@ -206,6 +215,7 @@
 #+begin_src emacs-lisp
   (use-package which-key
     :straight t
+    :diminish which-key-mode
     :config
     (which-key-mode))
 #+end_src
@@ -321,6 +331,7 @@
 #+begin_src emacs-lisp
   (use-package projectile
     :straight t
+    :diminish projectile-mode
     :config
     (projectile-mode +1)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
@@ -399,6 +410,7 @@
 #+begin_src emacs-lisp
   (use-package ivy
     :straight t
+    :diminish ivy-mode
     :config
     (ivy-mode t)
     :custom
@@ -483,6 +495,7 @@
 #+begin_src emacs-lisp
   (use-package company
     :straight t
+    :diminish company-mode
     :init
     (global-company-mode))
 #+end_src
@@ -568,6 +581,7 @@
 #+begin_src emacs-lisp
   (use-package yasnippet
     :straight t
+    :diminish yas-minor-mode
     :config
     (yas-global-mode 1))
 #+end_src
