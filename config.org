@@ -146,7 +146,9 @@
 :Source:   https://github.com/milkypostman/powerline
 :END:
 #+begin_src emacs-lisp
-  (use-package powerline
+  (use-package smart-mode-line
+    :straight t)
+#+end_src
     :straight t)
 #+end_src
 
