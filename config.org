@@ -489,6 +489,10 @@
 #+end_src
 
 ** Auto Completion
+:PROPERTIES:
+:Name:     Company
+:Source:   http://company-mode.github.io
+:END:
 - inbuffer completion framework
 - uses pluggable back-ends/front-ends to retrieve and display completion candidates
 #+begin_src emacs-lisp
