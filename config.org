@@ -954,27 +954,25 @@
    '(org-indent ((t (:inherit (org-hide fixed-pitch))))))
 #+end_src
 
-** GTD
-- task keeping setup
-- task files should be synced with Dropbox
-- shortcuts to open task files
+** Task Keeping
+- use Dropbox to sync task files
 - adds custom agenda view
-- keybinds only apply when the file in gtd-files exist
+- functionality only loads if all gtd files are found
+- all gtd key bindings will be behind the prefix "C-c g"
 #+begin_src emacs-lisp
   (setq gtd-files '("~/Dropbox/gtd/inbox.org"
                     "~/Dropbox/gtd/projects.org"
                     "~/Dropbox/gtd/reminders.org"
-                    "~/Dropbox/gtd/someday.org"
-                    "~/Dropbox/gtd/calendar.org"))
+                    "~/Dropbox/gtd/someday.org"))
 
-  (defun check-exists (list)
+  (defun check-files-exist (list)
     "t if all files in 'list' exist"
     (eval `(and ,@(mapcar
                    (lambda (filename) (file-exists-p filename))
                    list))))
 
 
-  (when (check-exists gtd-files)
+  (when (check-files-exist gtd-files)
     (defun open-gtd-projects ()
       (interactive)
       (find-file "~/Dropbox/gtd/projects.org"))
@@ -1003,8 +1001,11 @@
     (setq org-refile-targets '(("~/Dropbox/gtd/projects.org" :maxlevel . 3)
                                ("~/Dropbox/gtd/someday.org" :level . 1)
                                ("~/Dropbox/gtd/reminders.org" :maxlevel . 2)))
-    (setq org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "|"
-                                        "DONE(d)" "CANCELLED(c)" "DEFERRED(D)")))
+    (setq org-todo-keywords '((sequence "TODO(t@)" "NEXT(n@)" "WAITING(w@)" "|"
+                                        "BLOCKED(b@)" "|"
+                                        "DONE(d@)" "CANCELLED(c@)" "DEFERRED(D@)")))
+
+    (setq org-log-into-drawer t)
     (setq org-agenda-custom-commands
           '(("1" "My Agenda"
              ((agenda ""
