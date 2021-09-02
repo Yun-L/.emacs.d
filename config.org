@@ -168,9 +168,8 @@
 #+begin_src emacs-lisp
   (use-package moe-theme
     :straight t
-    :after (powerline)
     :init
-    (setq moe-theme-mode-line-color 'magenta)
+    ;; (setq moe-theme-mode-line-color 'magenta)
     :config
     (defun toggle-moe-dark ()
       "switch to moe-dark theme"
@@ -185,7 +184,6 @@
       (set-face-attribute 'fringe nil :background "#fdfde7")
       (set-face-extend 'org-block t nil))
     (toggle-moe-dark)
-    (powerline-moe-theme)
     (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
     (global-set-key (kbd "C-c t l") 'toggle-moe-light))
 #+end_src
