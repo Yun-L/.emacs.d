@@ -334,7 +334,8 @@
     (projectile-mode +1)
     (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
     :custom
-    (projectile-completion-system 'ivy "use ivy for projectile completion backend"))
+    (projectile-completion-system 'ivy "use ivy for projectile completion backend")
+    (projectile-enable-caching t))
 #+end_src
 - projectile integration with treemacs
 #+begin_src emacs-lisp
