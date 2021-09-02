@@ -534,6 +534,7 @@
     (setq lsp-keymap-prefix "C-c l")
     :after (which-key)
     :hook ((java-mode . lsp-deferred)
+           (csharp-mode . lsp-deferred)
            ;; which-key integration
            (lsp-mode . lsp-enable-which-key-integration))
     :commands (lsp lsp-deferred)
