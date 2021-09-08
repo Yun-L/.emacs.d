@@ -355,13 +355,13 @@
     :straight t
     :config
     (add-hook 'window-setup-hook #'(lambda () (persp-mode 1)))
+    :after (ivy)
+    :bind
+    ("C-x b" . #'persp-switch-to-buffer)
+    ("C-x k" . #'persp-kill-buffer)
     :custom
     (persp-keymap-prefix (kbd "C-c w"))
     (persp-autokill-buffer-on-remove 'kill-weak)
-
-    (with-eval-after-load "persp-mode"
-      (global-set-key (kbd "C-x b") #'persp-switch-to-buffer)
-      (global-set-key (kbd "C-x k") #'persp-kill-buffer))
 
     (with-eval-after-load "persp-mode"
       (with-eval-after-load "ivy"
