@@ -175,15 +175,14 @@
       "switch to moe-dark theme"
       (interactive)
       (moe-dark)
-      (set-face-attribute 'fringe nil :background "#303030")
-      (set-face-extend 'org-block t nil))
+      (set-face-attribute 'fringe nil :background "#303030"))
     (defun toggle-moe-light ()
       "switch to moe-light theme"
       (interactive)
       (moe-light)
       (set-face-attribute 'fringe nil :background "#fdfde7")
       (set-face-extend 'org-block t nil))
-    (toggle-moe-dark)
+    (toggle-moe-light)
     (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
     (global-set-key (kbd "C-c t l") 'toggle-moe-light))
 #+end_src
