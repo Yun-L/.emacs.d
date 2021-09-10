@@ -792,11 +792,13 @@
 
 ** C++
 
+- use LSP
 *** C++ Defaults
 - offsets
 #+begin_src emacs-lisp
   (add-hook 'c++-mode-hook
             (lambda ()
+              (setq c-basic-offset 4)
               (c-set-offset 'case-label '+)))
 #+end_src
 
