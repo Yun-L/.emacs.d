@@ -801,69 +801,6 @@
               (c-set-offset 'case-label '+)))
 #+end_src
 
-*** rtags
-- code tagging, source code navigation
-- http://www.rtags.net
-- needs to have active rtag server running
-- projects need to be indexed
-- starts rtags process on c/c++/objc modes
-- C-c r ? for help
-#+begin_src emacs-lisp
-  (use-package rtags
-    :straight t
-    :if (memq system-type '(gnu/linux))
-    :config
-    (rtags-enable-standard-keybindings)
-    (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
-    (add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
-    (add-hook 'objc-mode-hook 'rtags-start-process-unless-running)
-    (define-key c-mode-base-map (kbd "C-c r i") (function rtags-print-symbol-info))
-    (define-key c-mode-base-map (kbd "C-c r t") (function rtags-symbol-type))
-    :custom
-    (rtags-find-file-case-insensitive t))
-#+end_src
-
-*** company-rtags
-- integrate rtags with company
-#+begin_src emacs-lisp
-  (use-package company-rtags
-    :straight t
-    :after (company rtags)
-    :config
-    (push 'company-rtags company-backends)
-    (define-key c-mode-base-map (kbd "<C-tab>") (function company-complete))
-    :custom
-    (rtags-completions-enabled t))
-#+end_src
-
-*** flycheck-rtags
-- syntax checker using flycheck and rtags
-#+begin_src emacs-lisp
-  (use-package flycheck-rtags
-    :straight t
-    :after (flycheck rtags)
-    :config
-    (defun my-flycheck-rtags-setup ()
-      (flycheck-select-checker 'rtags)
-      (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-      (setq-local flycheck-check-syntax-automatically nil))
-    (add-hook 'c-mode-hook #'my-flycheck-rtags-setup)
-    (add-hook 'c++-mode-hook #'my-flycheck-rtags-setup)
-    (add-hook 'objc-mode-hook #'my-flycheck-rtags-setup)
-    :custom
-    (rtags-autostart-diagnostics t))
-#+end_src
-
-*** ivy-rtags
-- integrate rtags with ivy
-#+begin_src emacs-lisp
-  (use-package ivy-rtags
-    :straight t
-    :after (ivy rtags)
-    :custom
-    (rtags-display-result-backend 'ivy))
-#+end_src
-
 ** Lua
 *** Lua
 :PROPERTIES:
