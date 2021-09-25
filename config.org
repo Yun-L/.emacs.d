@@ -806,6 +806,26 @@
               (c-set-offset 'case-label '+)))
 #+end_src
 
+** OCaml
+#+begin_src emacs-lisp
+  (require 'opam-user-setup "~/.emacs.d/misc/opam-user-setup.el")
+
+  (use-package tuareg
+    :straight t)
+
+  (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var"
+                                                       "share")))))
+    (when (and opam-share (file-directory-p opam-share))
+      ;; Register Merlin
+      (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
+      (autoload 'merlin-mode "merlin" nil t nil)
+      ;; Automatically start it in OCaml buffers
+      (add-hook 'tuareg-mode-hook 'merlin-mode t)
+      (add-hook 'caml-mode-hook 'merlin-mode t)
+      ;; Use opam switch to lookup ocamlmerlin binary
+      (setq merlin-command 'opam)))
+#+end_src
+
 ** Lua
 *** Lua
 :PROPERTIES:
@@ -962,22 +982,4 @@
                     ((org-agenda-overriding-header "Waiting:")
                      (org-agenda-files '("~/Dropbox/gtd/projects.org")))))
              nil))))
-#+end_src
-
-
-
-#+begin_src emacs-lisp
-  (require 'opam-user-setup "~/.emacs.d/opam-user-setup.el")
-
-  (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var"
-                                                       "share")))))
-    (when (and opam-share (file-directory-p opam-share))
-      ;; Register Merlin
-      (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
-      (autoload 'merlin-mode "merlin" nil t nil)
-      ;; Automatically start it in OCaml buffers
-      (add-hook 'tuareg-mode-hook 'merlin-mode t)
-      (add-hook 'caml-mode-hook 'merlin-mode t)
-      ;; Use opam switch to lookup ocamlmerlin binary
-      (setq merlin-command 'opam)))
 #+end_src
