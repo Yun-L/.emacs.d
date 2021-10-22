@@ -866,6 +866,17 @@
   (use-package docker-compose-mode
     :straight t)
 #+END_SRC
+
+** CMake
+:PROPERTIES:
+:Name:     cmake-mode
+:Source:   https://github.com/Kitware/CMake/tree/master/Auxiliary
+:END:
+- CMake major mode
+#+begin_src emacs-lisp
+  (use-package cmake-mode
+    :straight t)
+#+end_src
 * Org Mode
 ** Org Mode Defaults
 - indent org files
