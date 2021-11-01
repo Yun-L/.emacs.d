@@ -811,7 +811,10 @@
   (require 'opam-user-setup "~/.emacs.d/misc/opam-user-setup.el")
 
   (use-package tuareg
-    :straight t)
+    :straight t
+    :config
+    (add-to-list 'auto-mode-alist '("\\.mll\\'" . tuareg-mode))
+    (add-to-list 'auto-mode-alist '("\\.mly\\'" . tuareg-mode))
 
   (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var"
                                                        "share")))))
