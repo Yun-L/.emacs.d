@@ -761,6 +761,17 @@
     (add-hook 'js2-mode-hook #'js2-imenu-extras-mode))
 #+end_src
 
+** Typescript
+:PROPERTIES:
+:Name:     typescript-mode
+:Source:   https://github.com/emacs-typescript/typescript.el
+:END:
+major mode for typescript
+#+begin_src emacs-lisp
+  (use-package typescript-mode
+    :straight t)
+#+end_src
+
 ** Web Templates
 :PROPERTIES:
 :Name:     web-mode
