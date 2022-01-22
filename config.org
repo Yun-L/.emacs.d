@@ -1008,8 +1008,11 @@ major mode for typescript
     (setq org-todo-keywords '((sequence "TODO(t@)" "NEXT(n@)" "WAITING(w@)" "|"
                                         "BLOCKED(b@)" "|"
                                         "DONE(d@)" "CANCELLED(c@)" "DEFERRED(D@)")))
-
     (setq org-log-into-drawer t)
+    ;; show due date prewarning only after the scheduled date of a task
+    (setq org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled)
+    (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+
     (setq org-agenda-custom-commands
           '(("1" "My Agenda"
              ((agenda ""
