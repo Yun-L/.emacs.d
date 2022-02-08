@@ -49,10 +49,6 @@
 
 * Default Preferences
 ** Visual Defaults
-- wrap text when lines are too long
-#+begin_src emacs-lisp
-  (global-visual-line-mode 1)
-#+end_src
 - display default emacs fringes (8 pixels on the left and right of buffers)
 #+begin_src emacs-lisp
   (fringe-mode nil)
@@ -74,6 +70,23 @@
 - use pixel size for frame resizes rather than font
 #+begin_src emacs-lisp
   (setq frame-resize-pixelwise t)
+#+end_src
+- adaptive line wrap
+#+begin_src emacs-lisp
+  (use-package adaptive-wrap
+    :straight t
+    :config
+    (progn
+      (setq-default adaptive-wrap-extra-indent 2)
+      (defun turn-on-adaptive-wrap-prefix-mode ()
+        "Turns on adaptive-wrap-prefix-mode."
+        (interactive)
+        (adaptive-wrap-prefix-mode 1))
+      (define-globalized-minor-mode global-adaptive-wrap-prefix-mode
+        adaptive-wrap-prefix-mode
+        turn-on-adaptive-wrap-prefix-mode)
+      (global-adaptive-wrap-prefix-mode 1)))
+
 #+end_src
 *** Fonts
 :PROPERTIES:
