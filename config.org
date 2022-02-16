@@ -181,6 +181,7 @@
 #+begin_src emacs-lisp
   (use-package moe-theme
     :straight t
+    :disabled
     :init
     ;; (setq moe-theme-mode-line-color 'magenta)
     :config
@@ -198,6 +199,13 @@
     (toggle-moe-light)
     (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
     (global-set-key (kbd "C-c t l") 'toggle-moe-light))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package gruvbox-theme
+    :straight t
+    :config
+    (load-theme 'gruvbox-light-soft t))
 #+end_src
 
 * Interface
