@@ -297,13 +297,28 @@
     :straight t
     :config
     (global-set-key (kbd "<escape>") #'god-mode-all)
-    ;; change cursor shape when entering/leaving god mode
-    (defun my-god-mode-update-cursor ()
-      (setq cursor-type (if (or god-local-mode buffer-read-only)
-                            'box
-                          'bar)))
-    (add-hook 'god-mode-enabled-hook #'my-god-mode-update-cursor)
-    (add-hook 'god-mode-disabled-hook #'my-god-mode-update-cursor)
+    ;; change modeline color when entering/leaving god mode
+    (setq gm/default-mode-line-active-foreground (face-attribute 'mode-line :foreground))
+    (setq gm/default-mode-line-active-background (face-attribute 'mode-line :background))
+    (setq gm/default-mode-line-inactive-foreground (face-attribute 'mode-line-inactive :foreground))
+    (setq gm/default-mode-line-inactive-background (face-attribute 'mode-line-inactive :background))
+    (defun my-god-mode-update-mode-line ()
+      (cond
+       (god-local-mode
+        (set-face-attribute 'mode-line nil
+                            :foreground gm/default-mode-line-active-foreground
+                            :background "#b8b467")
+        (set-face-attribute 'mode-line-inactive nil
+                            :foreground gm/default-mode-line-inactive-foreground
+                            :background "#e6c68a"))
+       (t
+        (set-face-attribute 'mode-line nil
+                            :foreground gm/default-mode-line-active-foreground
+                            :background gm/default-mode-line-active-background)
+        (set-face-attribute 'mode-line-inactive nil
+                            :foreground gm/default-mode-line-inactive-foreground
+                            :background gm/default-mode-line-inactive-background))))
+    (add-hook 'post-command-hook 'my-god-mode-update-mode-line)
     :custom
     (god-exempt-major-modes nil)
     (god-exempt-predicates nil))
