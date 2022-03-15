@@ -88,6 +88,10 @@
       (global-adaptive-wrap-prefix-mode 1)))
 
 #+end_src
+- set a static window name for emacs so I can select it in wmctrl
+#+begin_src emacs-lisp
+  (setq-default frame-title-format '("emacs-yun"))
+#+end_src
 *** Fonts
 :PROPERTIES:
 :Source:   https://input.djr.com/info/
