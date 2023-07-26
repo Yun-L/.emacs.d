@@ -178,33 +178,6 @@
 #+end_src
 
 ** Theme
-:PROPERTIES:
-:Name:     moe-theme
-:Source:   https://github.com/kuanyui/moe-theme.el
-:END:
-#+begin_src emacs-lisp
-  (use-package moe-theme
-    :straight t
-    :disabled
-    :init
-    ;; (setq moe-theme-mode-line-color 'magenta)
-    :config
-    (defun toggle-moe-dark ()
-      "switch to moe-dark theme"
-      (interactive)
-      (moe-dark)
-      (set-face-attribute 'fringe nil :background "#303030"))
-    (defun toggle-moe-light ()
-      "switch to moe-light theme"
-      (interactive)
-      (moe-light)
-      (set-face-attribute 'fringe nil :background "#fdfde7")
-      (set-face-extend 'org-block t nil))
-    (toggle-moe-light)
-    (global-set-key (kbd "C-c t d") 'toggle-moe-dark)
-    (global-set-key (kbd "C-c t l") 'toggle-moe-light))
-#+end_src
-
 #+begin_src emacs-lisp
   (use-package gruvbox-theme
     :straight t
@@ -284,44 +257,6 @@
     (speedbar-use-images nil "disable icons")
     ;; show hidden filenames
     (speedbar-directory-unshown-regexp "^\\(CVS\\|RCS\\|SCCS\\|\\.\\.*$\\)\\'"))
-#+end_src
-
-** Modal Editing
-:PROPERTIES:
-:Name:     god-mode
-:Source:   https://github.com/emacsorphanage/god-mode
-:END:
-- enter key chords without pressing the modifier keys
-#+begin_src emacs-lisp
-  (use-package god-mode
-    :straight t
-    :config
-    (global-set-key (kbd "<escape>") #'god-mode-all)
-    ;; change modeline color when entering/leaving god mode
-    (setq gm/default-mode-line-active-foreground (face-attribute 'mode-line :foreground))
-    (setq gm/default-mode-line-active-background (face-attribute 'mode-line :background))
-    (setq gm/default-mode-line-inactive-foreground (face-attribute 'mode-line-inactive :foreground))
-    (setq gm/default-mode-line-inactive-background (face-attribute 'mode-line-inactive :background))
-    (defun my-god-mode-update-mode-line ()
-      (cond
-       (god-local-mode
-        (set-face-attribute 'mode-line nil
-                            :foreground gm/default-mode-line-active-foreground
-                            :background "#b8b467")
-        (set-face-attribute 'mode-line-inactive nil
-                            :foreground gm/default-mode-line-inactive-foreground
-                            :background "#e6c68a"))
-       (t
-        (set-face-attribute 'mode-line nil
-                            :foreground gm/default-mode-line-active-foreground
-                            :background gm/default-mode-line-active-background)
-        (set-face-attribute 'mode-line-inactive nil
-                            :foreground gm/default-mode-line-inactive-foreground
-                            :background gm/default-mode-line-inactive-background))))
-    (add-hook 'post-command-hook 'my-god-mode-update-mode-line)
-    :custom
-    (god-exempt-major-modes nil)
-    (god-exempt-predicates nil))
 #+end_src
 
 ** Project File Explorer
