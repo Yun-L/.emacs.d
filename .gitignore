@@ -8,3 +8,5 @@
 !misc/
 !misc/*
 !.projectile
+!new_init.el
+!new_config.org

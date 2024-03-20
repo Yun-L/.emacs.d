@@ -48,6 +48,13 @@
 #+end_src
 
 * Default Preferences
+- remap major modes to tree sitter supported modes
+#+begin_src emacs-lisp
+  (add-to-list 'major-mode-remap-alist '(c-mode . c-ts-mode))
+  (add-to-list 'major-mode-remap-alist '(c++-mode . c++-ts-mode))
+  (add-to-list 'major-mode-remap-alist
+               '(c-or-c++-mode . c-or-c++-ts-mode))
+#+end_src
 ** Visual Defaults
 - display default emacs fringes (8 pixels on the left and right of buffers)
 #+begin_src emacs-lisp
@@ -99,18 +106,28 @@
 :END:
 - 'InputMono' for default font (if found)
 #+begin_src emacs-lisp
-  (if (member "InputMono" (font-family-list))
-      (set-frame-font "InputMono-12" nil t)
-    nil)
+  ;; (if (member "Input Mono" (font-family-list))
+  ;;     (set-frame-font "Input Mono" nil t)
+  ;;   nil)
 
-  (custom-theme-set-faces
-   'user
-   '(variable-pitch ((t (:family "InputSerif"))))
-   '(fixed-pitch ((t ( :family "InputMono")))))
+  ;; (custom-theme-set-faces
+  ;;  'user
+  ;;  '(variable-pitch ((t (:family "Input Serif"))))
+  ;;  '(fixed-pitch ((t ( :family "Input Mono")))))
+
+  (when
+      (find-font (font-spec :name "Input Mono"))
+    (set-frame-font "Input Mono-10" t t)
+    (custom-theme-set-faces
+     'user
+     '(variable-pitch ((t (:family "Input Serif"))))
+     '(fixed-pitch ((t ( :family "Input Mono")))))
+    )
 #+end_src
 
 ** Interface Defaults
 - custom keybinding to quickly access configs
+- CHECK
 #+begin_src emacs-lisp
   (defun find-user-config-file ()
     (interactive)
@@ -193,11 +210,12 @@
 :END:
 - represent edit history as a tree, rather than a linear sequence of changes
 #+begin_src emacs-lisp
-  (use-package undo-tree
-    :straight t
-    :diminish undo-tree-mode
-    :config
-    (global-undo-tree-mode))
+    (use-package undo-tree
+      :straight t
+      :diminish undo-tree-mode
+      :config
+      (global-undo-tree-mode)
+      (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
 #+end_src
 
 ** Key Binding Guidance
@@ -215,26 +233,12 @@
     (which-key-mode))
 #+end_src
 
-** Easier Window Switching
-:PROPERTIES:
-:Name:     ace-window
-:Source:   https://github.com/abo-abo/ace-window
-:END:
-- assign keys to each open window for selection
-#+begin_src emacs-lisp
-  (use-package ace-window
-    :straight t
-    :bind ("M-o" . ace-window)
-    :custom
-    ;; keep same behavior even with only 2 windows open
-    (aw-dispatch-always 1))
-#+end_src
-
 ** Transpose Window Layout
 :PROPERTIES:
 :Name:     transpose-frame
 :Source:   https://github.com/emacsmirror/emacswiki.org/blob/master/transpose-frame.el
 :END:
+- CHECK write myself?
 - command `transpose-frame` for transposing window arrangement
 - be careful not to leave treemacs sidebar open when transposing
 #+begin_src emacs-lisp
@@ -247,6 +251,7 @@
 :Name:     sr-speedbar
 :Source:   https://www.emacswiki.org/emacs/SrSpeedbar
 :END:
+- CHECK
 - allow opening of the builtin speedbar to be in the same emacs frame
 - speedbar docs: https://www.gnu.org/software/emacs/manual/html_node/speedbar/
 #+begin_src emacs-lisp
@@ -265,9 +270,13 @@
 :Source:   https://github.com/Alexander-Miller/treemacs
 :END:
 - tree layout file explorer
+- CHECK can I just use dired? more frustrating than useful
 #+begin_src emacs-lisp
   (use-package treemacs
+    :disabled
+    :after (xah-fly-keys)
     :straight t
+    :hook (treemacs-select-window . xah-fly-insert-mode-activate)
     :config
     ;; highlight file of current buffer
     (treemacs-follow-mode t)
@@ -290,6 +299,7 @@
 - treemacs integration with magit
 #+begin_src emacs-lisp
   (use-package treemacs-magit
+    :disabled
     :straight t
     :after (treemacs magit))
 #+end_src
@@ -314,6 +324,7 @@
 - projectile integration with treemacs
 #+begin_src emacs-lisp
   (use-package treemacs-projectile
+    :disabled
     :straight t
     :after (treemacs projectile))
 #+end_src
@@ -468,6 +479,7 @@
 :END:
 - inbuffer completion framework
 - uses pluggable back-ends/front-ends to retrieve and display completion candidates
+- CHECK do we need this? why not just show in minibuffer
 #+begin_src emacs-lisp
   (use-package company
     :straight t
@@ -478,6 +490,7 @@
 
 * Programming & Development
 ** Programming Defaults
+- CHECK maybe auto detect which one to use
   #+begin_src emacs-lisp
     (setq-default tab-width 4)
   #+end_src
@@ -493,64 +506,37 @@
     (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode))
 #+end_src
 
+** Tree Sitter
+- Incremental parsing, replace regex based syntax highlighting and editing
+- built in to emacs29
+#+begin_src emacs-lisp
+  ;; (use-package tree-sitter
+  ;;   :straight t
+  ;;   :config:
+  ;;   (global-tree-sitter-mode)
+  ;;   (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode))
+  ;; (use-package tree-sitter-lang
+  ;;   :straight t)
+#+end_src
+
 ** Language Server Protocol Support
 :PROPERTIES:
-:Source:   https://emacs-lsp.github.io/lsp-ui/
-:Name:     lsp-mode
+:Source:   https://github.com/joaotavora/eglot
+:Name:     eglot
 :END:
 - client for the Language Server Protocol
 - install language servers to get support for particular languages
-- UI modules for lsp-mode
+- build in to emacs29
 #+begin_src emacs-lisp
-  (use-package lsp-ui
-    :straight t
-    :commands lsp-ui-mode
-    :custom
-    (lsp-ui-peek-always-show t))
-#+end_src
-#+begin_src emacs-lisp
-    (use-package lsp-mode
-      :straight t
-      :init
-      (setq lsp-keymap-prefix "C-c l")
-      :after (which-key)
-      :hook ((java-mode . lsp-deferred)
-             (csharp-mode . lsp-deferred)
-             (c++-mode . lsp-deferred)
-             (c-mode . lsp-deferred)
-             ;; which-key integration
-             (lsp-mode . lsp-enable-which-key-integration))
-      :commands (lsp lsp-deferred)
-      :custom
-      (gc-cons-threshold 100000000)
-      (read-process-output-max (* 1024 1024))
-      (lsp-clients-clangd-executable "~/External/clangd_12.0.0/bin/clangd"))
-#+end_src
-- integration with ivy
-#+begin_src emacs-lisp
-  (use-package lsp-ivy
-    :straight t
-    :after (ivy)
-    :commands lsp-ivy-workspace-symbol)
-#+end_src
-- integration with treemacs
-#+begin_src emacs-lisp
-  (use-package lsp-treemacs
-    :straight t
-    :after (treemacs)
-    :commands lsp-treemacs-errors-list)
-#+end_src
-
-** Debug Adapter Protocol Support
-:PROPERTIES:
-:Name:     dap-mode
-:Source:   https://github.com/emacs-lsp/dap-mode
-:END:
-#+begin_src emacs-lisp
-  (use-package dap-mode
-    :straight t
-    :after lsp-mode
-    :config (dap-auto-configure-mode))
+  (use-package eglot
+    ;; :straight t
+    :config
+    (add-to-list 'eglot-server-programs '(c++-ts-mode . ("localhost" 50505)))
+    ;; (add-to-list 'eglot-server-programs '(python-mode . ("localhost" 50505)))
+    ;; (add-to-list 'eglot-server-programs '(js-mode . ("localhost" 50505)))
+    (global-set-key (kbd "M-.") 'xref-find-definitions)
+    (global-set-key (kbd "M-,") 'xref-go-back)
+    (global-set-key (kbd "M-p") 'xref-find-references))
 #+end_src
 
 ** Code Templating System
@@ -559,6 +545,7 @@
 :Name:     yasnippet
 :END:
 - template system
+- CHECK think of some more use cases for this, what can be replaced with this
 #+begin_src emacs-lisp
   (use-package yasnippet
     :straight t
@@ -578,8 +565,11 @@
 :Source:   https://magit.vc/
 :END:
 - interface for common git features
+- CHECK take a look at possible config values
 #+begin_src emacs-lisp
   (use-package magit
+    :after (xah-fly-keys)
+    :hook (magit-popup-mode . xah-fly-insert-mode-activate)
     :straight t
     :bind
     ("C-x g" . magit-status)
@@ -589,25 +579,17 @@
           ("RET" . magit-diff-visit-file-other-window)))
 #+end_src
 
-** Syntax Checking
-:PROPERTIES:
-:Name:     flycheck
-:Source:   https://www.flycheck.org/en/latest/index.html
-:END:
-#+begin_src emacs-lisp
-  (use-package flycheck
-    :straight t)
-#+end_src
-
 ** Fallback For Jumping To Definitions
 :PROPERTIES:
 :Name:     dumb-jump
 :Source:   https://github.com/jacktasia/dumb-jump
 :END:
 - regex based jump to definition
+- CHECK do i even use this?
 #+begin_src emacs-lisp
   (use-package dumb-jump
     :straight t
+    :disabled
     :config
     (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
     :custom
@@ -615,59 +597,20 @@
 #+end_src
 
 ** Python
-:PROPERTIES:
-:Source:   https://elpy.readthedocs.io/en/latest
-:Name:     elpy
-:END:
-- python development environment
-- uses flycheck for syntax checking backend
-- external dependencies can be installed with `elpy-config`
-#+begin_src emacs-lisp
-  (use-package elpy
-    :straight t
-    :after (company flycheck)
-    :defer t
-    :init
-    (advice-add 'python-mode :before 'elpy-enable) ;; defer loading
-    :config
-    (setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
-    (add-hook 'elpy-mode-hook 'flycheck-mode)
-    (add-hook 'python-mode-hook 'hs-minor-mode)
-    :custom
-    (elpy-folding-fringe-indicators t "enable code folding fringe indicators")
-    (elpy-modules
-     '(elpy-module-company
-       elpy-module-eldoc
-       elpy-module-flymake
-       elpy-module-folding
-       elpy-module-pyvenv
-       elpy-module-highlight-indentation
-       elpy-module-yasnippet
-       elpy-module-django
-       elpy-module-sane-defaults) "activate elpy modules")
-    ;; code folding compatibility
-    :custom-face
-    ;; code folding button styling
-    (elpy-folding-fringe-face ((t (:inherit (quote font-lock-keyword-face) :box (:line-width 1 :style released-button))))))
-#+end_src
 
 ** C#
+- CHECK can probably remove this
 *** C# Major Mode
+- built into emacs 29
 #+begin_src emacs-lisp
-  (use-package tree-sitter
-    :disabled
-    :straight t)
-  (use-package tree-sitter-langs
-    :disabled
-    :straight t)
-
-  (use-package csharp-mode
-    :straight t)
+  ;; (use-package csharp-mode
+  ;;   :straight t)
     ;; :config
     ;; (add-to-list 'auto-mode-alist '("\\.cs\\'" . csharp-tree-sitter-mode)))
 #+end_src
 
 ** Java
+- CHECK can probably remove this too
 *** Java Defaults
 - set column indicator at 100
 #+begin_src emacs-lisp
@@ -687,61 +630,30 @@
 #+end_src
 
 *** Java LSP Server
-:PROPERTIES:
-:Source:   https://github.com/emacs-lsp/lsp-java
-:Name:     lsp-java
-:Prerequisites: lsp-mode
-:END:
-#+begin_src emacs-lisp
-  (use-package lsp-java
-    :straight t
-    :after (lsp-mode)
-    :config
-    (add-hook 'java-mode-hook 'lsp)
-    (setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
-                                                   :path "C:/Program Files/AdoptOpenJDK/jdk-8.0.265.01-hotspot/"
-                                                   :default t)])
-    :custom
-    (lsp-java-server-install-dir "~/.emacs.d/lsp-java-server/")
-    (lsp-java-format-settings-url "~/.emacs.d/misc/eclipse-java-google-style.xml"))
-
-  (use-package dap-java
-    :ensure nil)
-#+end_src
-
-** Groovy
-*** Groovy Major Mode
-:PROPERTIES:
-:Name:     groovy-mode
-:Source:   https://github.com/Groovy-Emacs-Modes/groovy-emacs-modes
-:END:
-#+begin_src emacs-lisp
-  (use-package groovy-mode
-    :straight t)
-#+end_src
+# :PROPERTIES:
+# :Source:   https://github.com/emacs-lsp/lsp-java
+# :Name:     lsp-java
+# :Prerequisites: lsp-mode
+# :END:
+# #+begin_src emacs-lisp
+#   (use-package lsp-java
+#     :straight t
+#     :after (lsp-mode)
+#     :config
+#     (add-hook 'java-mode-hook 'lsp)
+#     (setq lsp-java-configuration-runtimes '[(:name "JavaSE-1.8"
+#                                                    :path "C:/Program Files/AdoptOpenJDK/jdk-8.0.265.01-hotspot/"
+#                                                    :default t)])
+#     :custom
+#     (lsp-java-server-install-dir "~/.emacs.d/lsp-java-server/")
+#     (lsp-java-format-settings-url "~/.emacs.d/misc/eclipse-java-google-style.xml"))
+# #+end_src
 
 ** Javascript
-*** JS Defaults
-#+begin_src emacs-lisp
-  (setq-default js-indent-level 4)
-  (setq-default js-switch-indent-offset 4)
-#+end_src
-
-*** Development Environment
-:PROPERTIES:
-:Name:     js2-mode
-:Source:   https://github.com/mooz/js2-mode
-:END:
-- major mode for javascript
-#+begin_src emacs-lisp
-  (use-package js2-mode
-    :straight t
-    :config
-    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
-    (add-hook 'js2-mode-hook #'js2-imenu-extras-mode))
-#+end_src
+- CHECK see lsp mode, or something less buggy
 
 ** Typescript
+- CHECK try lsp version
 :PROPERTIES:
 :Name:     typescript-mode
 :Source:   https://github.com/emacs-typescript/typescript.el
@@ -758,6 +670,7 @@ major mode for typescript
 :Source:   https://web-mode.org
 :END:
 - major mode for editing web templates
+- CHECK revise configs
 #+begin_src emacs-lisp
   (use-package web-mode
     :straight t
@@ -777,6 +690,7 @@ major mode for typescript
 :Source:   https://www.gnu.org/software/auctex/
 :END:
 - support for TeX and TeX macro packages
+- CHECK fix LaTeX stuff
 #+begin_src emacs-lisp
   (use-package tex ;;workaround because auctex is old
     :straight auctex
@@ -786,8 +700,7 @@ major mode for typescript
 #+end_src
 
 ** C++
-
-- use LSP
+- CHECK use eglot, add some helpers for creating compile_commands.json, 
 *** C++ Defaults
 - offsets
 #+begin_src emacs-lisp
@@ -797,30 +710,8 @@ major mode for typescript
               (c-set-offset 'case-label '+)))
 #+end_src
 
-** OCaml
-#+begin_src emacs-lisp
-  (require 'opam-user-setup "~/.emacs.d/misc/opam-user-setup.el")
-
-  (use-package tuareg
-    :straight t
-    :config
-    (add-to-list 'auto-mode-alist '("\\.mll\\'" . tuareg-mode))
-    (add-to-list 'auto-mode-alist '("\\.mly\\'" . tuareg-mode))
-
-    (let ((opam-share (ignore-errors (car (process-lines "opam" "config" "var"
-                                                         "share")))))
-      (when (and opam-share (file-directory-p opam-share))
-        ;; Register Merlin
-        (add-to-list 'load-path (expand-file-name "emacs/site-lisp" opam-share))
-        (autoload 'merlin-mode "merlin" nil t nil)
-        ;; Automatically start it in OCaml buffers
-        (add-hook 'tuareg-mode-hook 'merlin-mode t)
-        (add-hook 'caml-mode-hook 'merlin-mode t)
-        ;; Use opam switch to lookup ocamlmerlin binary
-        (setq merlin-command 'opam))))
-#+end_src
-
 ** Lua
+- CHECK not using this, but check out minecraft computer craft
 *** Lua
 :PROPERTIES:
 :Name:     lua-mode
@@ -834,6 +725,7 @@ major mode for typescript
     (lua-indent-level 4))
 #+end_src
 ** Markdown
+- CHECK useful, just review configs
 :PROPERTIES:
 :Name:     markdown-mode
 :Source:   https://jblevins.org/projects/markdown-mode/
@@ -851,6 +743,7 @@ major mode for typescript
 #+end_src
 
 ** Docker Compose
+- CHECK useful i guess
 :PROPERTIES:
 :Name:     docker-compose-mode
 :Source:   https://github.com/meqif/docker-compose-mode
@@ -862,6 +755,7 @@ major mode for typescript
 #+END_SRC
 
 ** CMake
+- CHECK Useful i guess
 :PROPERTIES:
 :Name:     cmake-mode
 :Source:   https://github.com/Kitware/CMake/tree/master/Auxiliary
@@ -872,6 +766,7 @@ major mode for typescript
     :straight t)
 #+end_src
 * Org Mode
+- CHECK see if theres better way to set faces, review configs for more useful toggles 
 ** Org Mode Defaults
 - indent org files
 #+begin_src emacs-lisp
@@ -925,6 +820,7 @@ major mode for typescript
 - adds custom agenda view
 - functionality only loads if all gtd files are found
 - all gtd key bindings will be behind the prefix "C-c g"
+- CHECK this is mostly working, maybe review key binds and code in general
 #+begin_src emacs-lisp
   (setq gtd-files '("~/Dropbox/gtd/inbox.org"
                     "~/Dropbox/gtd/projects.org"
@@ -985,9 +881,173 @@ major mode for typescript
                      (org-agenda-files '("~/Dropbox/gtd/inbox.org"))))
               (todo "NEXT"
                     ((org-agenda-overriding-header "In Progress:")
-                     (org-agenda-files '("~/Dropbox/gtd/projects.org"))))
-              (todo "WAITING"
+                     (org-agenda-files '("~/Dropbox/gtd/projects.todo"))))
+              (org "WAITING"
                     ((org-agenda-overriding-header "Waiting:")
                      (org-agenda-files '("~/Dropbox/gtd/projects.org")))))
              nil))))
 #+end_src
+
+** temp
+#+begin_src emacs-lisp
+  (use-package uml-mode
+    :straight t)
+#+end_src
+- testing out highlighting
+- CHECK doesnt really work, but check again
+#+begin_src emacs-lisp
+  (use-package highlight
+    :straight t)
+#+end_src
+
+- CHECK dont really use this
+#+begin_src emacs-lisp
+  (use-package docker
+    :straight t
+    :bind ("C-c d" . docker))
+#+end_src
+
+- CHECK whats the point of this
+#+begin_src emacs-lisp
+  (use-package lsp-docker
+    :straight t)
+#+end_src
+
+- CHECK i don't use this either
+#+begin_src emacs-lisp
+  (use-package hyperbole
+    :disabled
+    :straight t)
+#+end_src
+
+- CHECK useful, but i don't use most of it. Maybe build my own key engine. Annoying that every buffer starts in command mode
+#+begin_src emacs-lisp
+  (use-package xah-fly-keys
+    ;; :commands xah-fly-insert-mode-activate
+    :straight t
+    :init
+    (setq xah-fly-use-control-key nil)
+    (setq xah-fly-use-meta-key nil)
+    :config
+    (global-set-key (kbd "<escape>") 'xah-fly-command-mode-activate)
+    (xah-fly-keys-set-layout "dvorak")
+    (xah-fly-keys 1))
+#+end_src
+#+begin_src emacs-lisp
+  ;; (straight-use-package
+  ;;  '(nano-emacs :type git :host github :repo "rougier/nano-emacs")
+  ;;  :disabled
+  ;;  :config
+  ;;  (require 'nano))
+#+end_src
+- CHECK used at work, maybe wrap with toggle or something so its not auto executed on save
+#+begin_src emacs-lisp
+  (use-package prettier
+    :straight t)
+#+end_src
+- CHECK this seems useful, but haven't built habit of using it. Review to make it easier to use
+#+begin_src emacs-lisp
+  (use-package atomic-chrome
+    :straight t)
+#+end_src
+- CHECK useful as a fallback, try configuring as last resort functionality
+#+begin_src emacs-lisp
+  (use-package counsel-etags
+    :straight t)
+    ;; :config
+    ;; (global-set-key (kbd "M-.") 'counsel-etags-find-tag-at-point)
+    ;; (global-set-key (kbd "M-,") 'pop-tag-mark))
+#+end_src
+
+
+** docker-tramp
+- CHECK not sure if I actually use this
+- has alternative in emacs 29
+#+begin_src emacs-lisp
+  ;; (use-package docker-tramp
+  ;;   :straight t)
+#+end_src
+
+* Easier Window Switching
+:PROPERTIES:
+:Name:     ace-window
+:Source:   https://github.com/abo-abo/ace-window
+:END:
+- CHECK very useful, some stuff doesnt work though, look into it
+#+begin_src emacs-lisp
+  (use-package ace-window
+    :straight t
+    :bind ("M-o" . ace-window)
+    :custom
+    ;; keep same behavior even with only 2 windows open
+    (aw-dispatch-always 1))
+#+end_src
+
+
+* Notes for new config
+** Guidelines
+- lower dependencies and complexity as much as possible
+- prefer manual installation of packages
+- consider self made solutions over installing large packages just to use a small piece of functionality
+- continue using use-package, and org-babel
+  - organize config by functionality, rather than by package (but still compile down to modular configs for easy debugging)
+** Organization
+- Initial, early setup
+- Package inclusion (group by functionality)
+- Variables
+- Keybindings
+** Packages
+- use-package
+- tree-sitter
+- eglot
+- org
+- adaptive-wrap
+- InputMono font
+- smart-mode-line
+- diminish
+- gruvbox-theme
+- undo-tree
+- which-key
+- transpose-frame
+- sr-speedbar
+- treemacs
+- treemacs-magit
+- projectile
+- treemacs-projectile
+- persp-mode
+- persp-mode-projectile-bridge
+- ivy
+- counsel
+- swiper
+- prescient
+- ivy-prescient
+- company-prescient
+- avy
+- company
+- yasnippet
+- yasnippet-snippets?
+- magit
+- dump-jump
+- csharp?
+- java?
+- typescript?
+- web-mode
+- latex/tex?
+- cpp/c
+- lua?
+- markdown?
+- docker-compose?
+- cmake?
+- uml?
+- highlight?
+- docker?
+- lsp-docker?
+- hyperbole?
+- xah-fly-keys
+- prettier
+- atomic-chrome
+- counsel-etags?
+- ace-window
+** Custom commands
+- shortcut to emacs config
+- gtd stuff
