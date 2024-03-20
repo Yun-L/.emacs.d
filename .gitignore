@@ -10,3 +10,5 @@
 !.projectile
 !new_init.el
 !new_config.org
+!external_packages/
+!external_packages/*
