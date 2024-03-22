@@ -14,8 +14,19 @@
 (add-to-list 'major-mode-remap-alist '(c-or-c++-mode . c-or-c++-ts-mode))
 
 
+
+
+;; include for now but plans to modify or do on my own
+(use-package ace-window
+  :load-path "external_packages/ace-window/"
+  :after (avy)
+  :bind ("M-o" . ace-window)
+  :custom
+  ;; keep same behavior even with only 2 windows open
+  (aw-dispatch-always 1))
 (use-package avy
   :load-path "external_packages/avy/"
+  :demand t
   :bind
   (("C-:" . avy-goto-char)
    ("C-;" . avy-goto-char-2))
@@ -23,16 +34,94 @@
   (avy-keys '(?a ?o ?e ?u ?i ?d ?h ?t ?n ?s) "change to dvorak home row keys"))
 
 
-;; include for now but plans to modify or do on my own
-(use-package ace-window
-  :load-path "external_packages/ace-window/"
-  :after (avy)
-  :commands ace-window
-  :bind ("M-o" . ace-window)
-  :custom
-  ;; keep same behavior even with only 2 windows open
-  (aw-dispatch-always 1))
+(use-package gruvbox-theme
+  :load-path "external_packages/emacs-theme-gruvbox/"
+  :after (autothemer)
+  ;; :init
+  ;; (add-to-list 'custom-theme-load-path "external_packages/emacs-theme-gruvbox/")
+  :config (load-theme 'gruvbox-light-soft t))
+(use-package dash ;; dependency for gruvbox-theme, magit
+  :load-path "external_packages/dash.el/")
+(use-package autothemer ;; dependency for gruvbox-theme
+  :after (dash)
+  :load-path "external_packages/autothemer/")
 
+
+(use-package undo-tree
+  :load-path "external_packages/undo-tree/"
+  :after (queue)
+  :config
+  (global-undo-tree-mode)
+  (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo"))))
+(use-package queue ;; dependency for undo-tree
+  :load-path "external_packages/queue/")
+
+
+(use-package magit
+  :load-path "external_packages/magit/lisp/"
+  :after (dash with-editor compat xah-fly-keys) ; transient? (not installed but still works)
+  ;; :hook (magit-popup-mode . xah-fly-insert-mode-activate)
+  :bind
+  ("C-x g" . magit-status)
+  (:map magit-file-section-map
+        ("RET" . magit-diff-visit-file-other-window)
+        :map magit-hunk-section-map
+        ("RET" . magit-diff-visit-file-other-window)))
+(use-package compat ;; dependency for magit
+  :load-path "external_packages/compat/")
+(use-package with-editor ;; dependency for magit
+  :load-path "external_packages/with-editor/lisp/")
+
+(use-package projectile
+  :load-path "external_packages/projectile/"
+  :config
+  (projectile-mode +1)
+  (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+  :custom
+  (projectile-enable-caching t))
+;; conditionally use external tools, ripgrep, ag etc
+
+(use-package persp-mode
+  :load-path "external_packages/persp-mode.el/"
+  :config
+  (add-hook 'window-setup-hook #'(lambda () (persp-mode 1)))
+  :bind
+  ("C-x b" . #'persp-switch-to-buffer)
+  ("C-x k" . #'persp-kill-buffer)
+  :custom
+  (persp-keymap-prefix (kbd "C-c w"))
+  (persp-autokill-buffer-on-remove 'kill-weak))
+(use-package persp-mode-projectile-bridge
+  :load-path "external_packages/persp-mode-projectile-bridge.el/"
+  :after (persp-mode projectile)
+  :config
+  (with-eval-after-load "persp-mode-projectile-bridge-autoloads"
+    (add-hook 'persp-mode-projectile-bridge-mode-hook
+              #'(lambda ()
+                  (if persp-mode-projectile-bridge-mode
+                      (persp-mode-projectile-bridge-find-perspectives-for-all-buffers)
+                    (persp-mode-projectile-bridge-kill-perspectives))))
+    (add-hook 'after-init-hook
+              #'(lambda ()
+                  (persp-mode-projectile-bridge-mode 1))
+              t)))
+  
+
+(use-package xah-fly-keys
+  :load-path "external_packages/xah-fly-keys/"
+  :init
+  (setq xah-fly-use-control-key nil)
+  (setq xah-fly-use-meta-key nil)
+  :config
+  (global-set-key (kbd "<escape>") 'xah-fly-command-mode-activate)
+  (xah-fly-keys-set-layout "dvorak")
+  (xah-fly-keys 1))
+
+
+(use-package yasnippet
+  :load-path "external_packages/yasnippet/"
+  :config
+  (yas-global-mode 1))
 
 
 ;; built in
@@ -49,14 +138,19 @@
   (tooltip-mode 0)
   (setq frame-resize-pixelwise t)
   (setq-default frame-title-format '("emacs-yun"))
-  (when
-      (find-font (font-spec :name "Input Mono"))
-    (set-frame-font "Input Mono-10" t t)
-    (custom-theme-set-faces
-     'user
-     '(variable-pitch ((t (:family "Input Serif"))))
-     '(fixed-pitch ((t ( :family "Input Mono")))))
-    )
+  (add-to-list
+   'default-frame-alist
+   ;; "-outline-InputMono-regular-normal-normal-mono-*-*-*-*-c-*-iso10646-1"
+   '(font . "-outline-InputMono Medium-medium-normal-normal-mono-19-*-*-*-c-*-iso10646-1"))
+  ;; (when
+  
+  ;;     (find-font (font-spec :name "InputMono-12"))
+  ;;   (set-frame-font "InputMono-12" t t)
+  ;;   (custom-theme-set-faces
+  ;;    'user
+  ;;    '(variable-pitch ((t (:family "Input Serif"))))
+  ;;    '(fixed-pitch ((t ( :family "Input Mono")))))
+  ;;   )
   (defun find-user-config-file ()
     (interactive)
     (if (file-exists-p "~/.emacs.d/config.org")
@@ -87,6 +181,10 @@
     (add-hook 'prog-mode-hook #'display-fill-column-indicator-mode))
   (setq c-basic-offset 4)
   (c-set-offset 'case-label '+)
+  (add-hook 'c++-mode-hook
+            (lambda ()
+              (setq c-basic-offset 4)
+              (c-set-offset 'case-label '+)))
   )
 
 (use-package eglot
@@ -134,8 +232,6 @@
    '(org-indent ((t (:inherit (org-hide fixed-pitch)))))))
 
 ;;;; definitely want
-;; (use-package undo-tree)
-;; (use-package magit)
 ;; (use-package yasnippet)
 ;; (use-package yasnippet-snippets)
 
@@ -148,40 +244,14 @@
 
 ;;;; unsure what to do with these
 ;; (use-package sr-speedbar)
-;; (use-package company)
 ;; (use-package prescient)
 ;; (use-package latex/tex)
-;; (use-package counsel-etags)
-;; (use-package atomic-chrome)
-;; (use-package hyperbole)
-;; (use-package highlight)
-
-;;;; do myself or remove
-;; (use-package smart-mode-line)
-;; (use-package diminish)
-;; (use-package gruvbox-theme)
-;; (use-package which-key)
-;; (use-package transpose-frame)
-;; (use-package treemacs)
-;; (use-package treemacs-magit)
-;; (use-package projectile)
-;; (use-package treemacs-projectile)
-;; (use-package persp-mode)
-;; (use-package persp-mode-projectile-bridge)
 ;; (use-package ivy)
 ;; (use-package counsel)
 ;; (use-package swiper)
-;; (use-package dump-jump)
-;; (use-package ivy-prescient)
-;; (use-package company-prescient)
-;; (use-package csharp)
-;; (use-package lua)
-;; (use-package markdown)
-;; (use-package docker-compose)
-;; (use-package xah-fly-keys)
-;; (use-package docker)
-;; (use-package lsp-docker)
-;; (use-package java)
-;; (use-package typescript)
-;; (use-package uml)
-;; (use-package adaptive-wrap)
+;; (use-package smart-mode-line)
+;; (use-package diminish)
+;; (use-package transpose-frame)
+
+;;;; maybe useful at work?
+;; (use-package atomic-chrome)

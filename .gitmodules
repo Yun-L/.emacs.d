@@ -4,3 +4,42 @@
 [submodule "external_packages/avy"]
 	path = external_packages/avy
 	url = https://github.com/abo-abo/avy.git
+[submodule "external_packages/emacs-theme-gruvbox"]
+	path = external_packages/emacs-theme-gruvbox
+	url = https://github.com/greduan/emacs-theme-gruvbox.git
+[submodule "external_packages/autothemer"]
+	path = external_packages/autothemer
+	url = git@github.com:jasonm23/autothemer.git
+[submodule "external_packages/dash.el"]
+	path = external_packages/dash.el
+	url = git@github.com:magnars/dash.el.git
+[submodule "external_packages/undo-tree"]
+	path = external_packages/undo-tree
+	url = https://gitlab.com/tsc25/undo-tree.git
+[submodule "external_packages/queue"]
+	path = external_packages/queue
+	url = https://github.com/emacs-straight/queue.git
+[submodule "external_packages/magit"]
+	path = external_packages/magit
+	url = https://github.com/magit/magit.git
+[submodule "external_packages/with-editor"]
+	path = external_packages/with-editor
+	url = https://github.com/magit/with-editor.git
+[submodule "external_packages/compat"]
+	path = external_packages/compat
+	url = https://github.com/emacs-compat/compat.git
+[submodule "external_packages/projectile"]
+	path = external_packages/projectile
+	url = https://github.com/bbatsov/projectile.git
+[submodule "external_packages/persp-mode.el"]
+	path = external_packages/persp-mode.el
+	url = https://github.com/Bad-ptr/persp-mode.el.git
+[submodule "external_packages/persp-mode-projectile-bridge.el"]
+	path = external_packages/persp-mode-projectile-bridge.el
+	url = https://github.com/Bad-ptr/persp-mode-projectile-bridge.el.git
+[submodule "external_packages/xah-fly-keys"]
+	path = external_packages/xah-fly-keys
+	url = https://github.com/xahlee/xah-fly-keys.git
+[submodule "external_packages/yasnippet"]
+	path = external_packages/yasnippet
+	url = https://github.com/joaotavora/yasnippet.git
